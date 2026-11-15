@@ -1,0 +1,4 @@
+.DS_Store
+assets/images/*.mp4
+assets/images/*.webm
+*.part

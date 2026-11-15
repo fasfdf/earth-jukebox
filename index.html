@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Earth Jukebox — hear NASA's view of a changing planet</title>
+  <meta name="description" content="Earth Jukebox pairs NASA Earth Information Center visualizations with sound generated in real time, so Earth science can be heard as well as seen.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2714%27 fill=%27%23ffb454%27/%3E%3Cpath d=%27M6 16q5-9 10 0t10 0%27 fill=%27none%27 stroke=%27%23070b18%27 stroke-width=%273%27/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#player">Skip to the player</a>
+
+  <div id="fileWarning" class="banner" role="alert" hidden>
+    <strong>This page needs a local web server.</strong>
+    It was opened straight from a file, and browsers block the scripts and data in that mode.
+    In VS Code, install the “Live Server” extension and choose “Open with Live Server”, or run
+    <code>python3 -m http.server 8000</code> in this folder and open <code>http://localhost:8000</code>.
+  </div>
+  <script>
+    if (location.protocol === "file:") document.getElementById("fileWarning").hidden = false;
+  </script>
+
+  <header class="site-header">
+    <p class="eyebrow">NASA Space Apps Challenge 2026 · Earth Information Jukebox</p>
+    <h1>Earth Jukebox</h1>
+    <p class="lede">Pick a NASA view of our changing planet and listen to it. Sound is generated live, in step with the picture, so the science can be heard as well as seen.</p>
+  </header>
+
+  <main>
+    <section class="card intro" aria-labelledby="howHeading">
+      <h2 id="howHeading">How to listen</h2>
+      <ol>
+        <li>Choose a visualization, then press <strong>Play</strong>. Nothing plays until you do.</li>
+        <li>Listen for pitch first: a higher note means a higher value. The table called “What you are hearing” lists everything else.</li>
+        <li>Each item says whether its sound comes from <strong>scientific data</strong> (the measured numbers) or from <strong>image features</strong> (the colors on screen). Only the first is a direct reading of the measurement.</li>
+      </ol>
+      <p class="hint">Keyboard: Tab moves between controls, Space plays or pauses, and the arrow keys move the timeline when it has focus.</p>
+    </section>
+
+    <section id="player" class="card player" aria-labelledby="playerHeading">
+      <h2 id="playerHeading" class="visually-hidden">Player</h2>
+
+      <div class="chooser">
+        <div class="field grow">
+          <label for="itemSelect">Visualization</label>
+          <select id="itemSelect"></select>
+        </div>
+        <div class="field">
+          <label for="fileInput">Or load your own video or image frames</label>
+          <input id="fileInput" type="file" accept="video/*,image/*" multiple>
+        </div>
+      </div>
+
+      <div id="stage" class="stage">
+        <canvas id="stageCanvas" role="img" aria-label="Visualization"></canvas>
+        <video id="stageVideo" muted playsinline preload="auto" hidden aria-label="NASA visualization video. Its own audio is muted."></video>
+        <p id="stageNote" class="stage-note" hidden></p>
+      </div>
+      <p id="stageCaption" class="caption"></p>
+      <canvas id="scope" class="scope" aria-hidden="true"></canvas>
+
+      <div class="transport" role="group" aria-label="Playback controls">
+        <button id="playBtn" type="button" class="primary">Play</button>
+        <button id="restartBtn" type="button">Restart</button>
+        <div class="field grow">
+          <label for="timeline">Timeline</label>
+          <input id="timeline" type="range" min="0" max="1" step="0.01" value="0">
+        </div>
+        <output id="timeReadout" for="timeline" class="readout"></output>
+      </div>
+
+      <div class="settings" role="group" aria-label="Sound and display settings">
+        <div class="field">
+          <label for="volume">Volume</label>
+          <input id="volume" type="range" min="0" max="100" step="1" value="70">
+        </div>
+        <button id="muteBtn" type="button" aria-pressed="false">Mute</button>
+        <div class="field">
+          <label for="speed">Speed</label>
+          <select id="speed">
+            <option value="0.5">Half speed</option>
+            <option value="1" selected>Normal</option>
+            <option value="2">Double speed</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="curve">Pitch curve</label>
+          <select id="curve">
+            <option value="quantized" selected>Musical scale</option>
+            <option value="log">Logarithmic</option>
+            <option value="linear">Linear</option>
+          </select>
+        </div>
+        <div class="field" id="colorTargetField" hidden>
+          <label for="colorTarget">Color to follow</label>
+          <select id="colorTarget"></select>
+        </div>
+        <label class="check"><input id="reducedMotion" type="checkbox"> Reduce motion</label>
+        <label class="check"><input id="announce" type="checkbox"> Announce key moments</label>
+        <button id="exportBtn" type="button">Download audio (WAV)</button>
+      </div>
+
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+      <p id="liveRegion" class="visually-hidden" aria-live="polite"></p>
+    </section>
+
+    <div class="columns">
+      <section class="card" aria-labelledby="itemTitle">
+        <h2 id="itemTitle">Loading…</h2>
+        <p id="derivedBadge" class="badge"></p>
+        <p id="itemTimeRange" class="hint" hidden></p>
+        <p id="itemDescription"></p>
+        <h3>What happens, in words</h3>
+        <p id="itemSummary"></p>
+        <p id="momentNow" class="moment-now" hidden></p>
+        <div id="momentsBlock" hidden>
+          <h3>Key moments</h3>
+          <p class="hint">Choose a moment to jump there.</p>
+          <ul id="moments" class="moments"></ul>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="mappingHeading">
+        <h2 id="mappingHeading">What you are hearing</h2>
+        <div class="table-wrap">
+          <table id="mappingTable">
+            <thead>
+              <tr><th scope="col">Sound</th><th scope="col">Driven by</th><th scope="col">In plain words</th><th scope="col">Limits</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <h3>Right now</h3>
+        <p id="liveReadout" class="live-readout">Press Play to start.</p>
+        <h3>What the sound cannot tell you</h3>
+        <ul id="limitations"></ul>
+        <h3>Source and credit</h3>
+        <div id="sourceBlock"></div>
+      </section>
+    </div>
+
+    <section class="card lab" aria-labelledby="labHeading">
+      <h2 id="labHeading">Light to sound</h2>
+      <p>Light and sound are both waves, but visible light vibrates about a trillion times faster than anything we can hear. Halve a light frequency 40 times (drop it 40 octaves) and it lands in the range of a piano, with the spacing between colors kept intact.</p>
+      <div class="lab-row">
+        <div class="field grow">
+          <label for="wavelength">Wavelength of light, in nanometres</label>
+          <input id="wavelength" type="range" min="380" max="750" step="1" value="550">
+        </div>
+        <span id="swatch" class="swatch" aria-hidden="true"></span>
+        <button id="lightPlay" type="button">Play this color</button>
+      </div>
+      <p id="lightReadout" class="live-readout"></p>
+      <p class="hint">This is a way to explore the math, not a measurement. The swatch color is approximate.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Data and visualizations courtesy of NASA: GISTEMP v4 (NASA Goddard Institute for Space Studies) and NASA's Scientific Visualization Studio. Sound is synthesized in your browser with the Web Audio API. Built for the NASA Space Apps Challenge 2026. This project is not endorsed by NASA.</p>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

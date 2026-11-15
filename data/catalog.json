@@ -1,0 +1,797 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "gistemp-data",
+      "kind": "data",
+      "derivedFrom": "scientific-data",
+      "title": "Global temperature, 1880–2025 (from NASA data)",
+      "description": "Each year from 1880 to 2025 becomes one note. The picture shows one colored stripe per year (blue for cooler than the 1951–1980 average, red for warmer) with a line tracing the same values.",
+      "summary": "For the first sixty years the notes stay low and wander. From about 1980 they climb steadily, and the last decade holds the highest notes of the whole piece. The warmest year in the record is 2024.",
+      "keyMoments": [
+        {
+          "at": 1880,
+          "text": "1880: the record begins, slightly below the 1951–1980 average."
+        },
+        {
+          "at": 1909,
+          "text": "1909: the coldest year in the record, about 0.48 °C below the average. This is the lowest note."
+        },
+        {
+          "at": 1944,
+          "text": "1944: a warm peak in the 1940s, about 0.20 °C above the average."
+        },
+        {
+          "at": 1964,
+          "text": "1964: a brief dip to about 0.20 °C below the average."
+        },
+        {
+          "at": 1980,
+          "text": "1980: the steady climb begins. Most notes from here are higher than the ones before."
+        },
+        {
+          "at": 1998,
+          "text": "1998: a sharp jump to about 0.61 °C above the average during a strong El Niño."
+        },
+        {
+          "at": 2016,
+          "text": "2016: the first year more than 1 °C above the average."
+        },
+        {
+          "at": 2024,
+          "text": "2024: the warmest year in the record, about 1.28 °C above the average. This is the highest note."
+        }
+      ],
+      "data": {
+        "file": "data/gistemp_annual.json",
+        "unit": "°C",
+        "valueLabel": "Temperature anomaly",
+        "stepLabel": "Year",
+        "signed": true
+      },
+      "timing": {
+        "stepSeconds": 0.25
+      },
+      "visual": {
+        "type": "stripes"
+      },
+      "mapping": {
+        "waveform": "triangle",
+        "pitch": {
+          "feature": "value",
+          "curve": "quantized",
+          "fMin": 220,
+          "fMax": 880,
+          "scale": "pentatonicMinor",
+          "root": 57,
+          "drivenBy": "Temperature anomaly for the year",
+          "explain": "Warmer year, higher note. Cooler year, lower note.",
+          "bounds": "220–880 Hz (A3 to A5), snapped to a five-note scale"
+        },
+        "loudness": {
+          "feature": "trend",
+          "min": 0.45,
+          "max": 0.9,
+          "drivenBy": "Nine-year average temperature",
+          "explain": "As the long-term average rises, the sound gets gently louder.",
+          "bounds": "Always between half and full level, under a fixed ceiling"
+        },
+        "timbre": {
+          "feature": "value",
+          "min": 0.15,
+          "max": 0.9,
+          "drivenBy": "Temperature anomaly for the year",
+          "explain": "Cooler years sound soft and mellow. Warmer years sound brighter and sharper.",
+          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
+        },
+        "pan": {
+          "feature": "progress",
+          "min": -0.7,
+          "max": 0.7,
+          "drivenBy": "Position in time",
+          "explain": "The sound travels from your left ear (1880) to your right ear (2025).",
+          "bounds": "70% left to 70% right"
+        },
+        "texture": {
+          "feature": "change",
+          "max": 0.8,
+          "drivenBy": "Change from the previous year",
+          "explain": "A soft, low rush of air appears only when one year is very different from the year before.",
+          "bounds": "Very quiet, and silent for small changes"
+        }
+      },
+      "source": {
+        "name": "GISS Surface Temperature Analysis (GISTEMP v4), NASA Goddard Institute for Space Studies",
+        "url": "https://data.giss.nasa.gov/gistemp/",
+        "attribution": "GISTEMP Team, 2026: GISS Surface Temperature Analysis (GISTEMP), version 4. NASA Goddard Institute for Space Studies.",
+        "license": "NASA data, free to reuse with credit. See the GISTEMP page for citation guidance.",
+        "accessed": "2026-11-15",
+        "related": "Shown as a map animation in NASA SVS visualization 5603, https://svs.gsfc.nasa.gov/5603/"
+      },
+      "limitations": [
+        "The sound follows the global yearly average only. It says nothing about where on Earth the warming is.",
+        "Notes are snapped to a musical scale, so two years with slightly different values can share a note. Switch the pitch curve to Linear or Logarithmic to hear the unsnapped values.",
+        "Values were read from the NASA GISS file on 15 November 2026. NASA revises recent years slightly over time; run tools/update_data.py to refresh them."
+      ],
+      "timeRange": "1880 to 2025, one value per year"
+    },
+    {
+      "id": "svs-5603-frames",
+      "kind": "video",
+      "derivedFrom": "image-features",
+      "title": "Global temperature map animation (from NASA frames)",
+      "description": "NASA's animated world map of temperature anomalies from 1880 to 2025. Blues mark places cooler than the 1951–1980 average and reds mark places warmer. Here the sound is computed live from the colors of each video frame, not from the temperature numbers.",
+      "summary": "Early in the animation the map is a patchwork of pale blues and reds. Toward the end, red spreads across almost the whole map, most strongly over the Arctic and the northern continents.",
+      "keyMoments": [],
+      "timing": {
+        "sampleSeconds": 0.08
+      },
+      "visual": {
+        "type": "video",
+        "local": "assets/clips/temperature_map.mp4",
+        "remote": "https://svs.gsfc.nasa.gov/vis/a000000/a005600/a005603/GISTEMP_Map2025_HD_nosmoothing.mp4"
+      },
+      "colorTarget": "warm",
+      "featureRanges": {
+        "brightness": [
+          0.33,
+          0.44
+        ],
+        "colorAmount": [
+          0.01,
+          0.47
+        ],
+        "change": [
+          0,
+          0.04
+        ],
+        "warmth": [
+          0.1,
+          0.98
+        ],
+        "centroidX": [
+          0.35,
+          0.7
+        ]
+      },
+      "mapping": {
+        "waveform": "triangle",
+        "pitch": {
+          "feature": "warmth",
+          "curve": "quantized",
+          "fMin": 220,
+          "fMax": 880,
+          "scale": "pentatonicMinor",
+          "root": 57,
+          "drivenBy": "Balance of warm colors against cool colors in the frame",
+          "explain": "More red than blue on screen, higher note. More blue than red, lower note.",
+          "bounds": "220–880 Hz (A3 to A5), snapped to a five-note scale"
+        },
+        "density": {
+          "feature": "colorAmount",
+          "minRate": 0.5,
+          "maxRate": 6,
+          "drivenBy": "Share of the frame covered by the selected color",
+          "explain": "The more of the picture the selected color covers, the faster the notes repeat.",
+          "bounds": "From one note every two seconds up to six notes a second"
+        },
+        "loudness": {
+          "feature": "brightness",
+          "min": 0.4,
+          "max": 0.85,
+          "drivenBy": "Overall brightness of the frame",
+          "explain": "A brighter picture sounds a little louder.",
+          "bounds": "Always under a fixed ceiling, with a volume control"
+        },
+        "timbre": {
+          "feature": "colorAmount",
+          "min": 0.2,
+          "max": 0.85,
+          "drivenBy": "Share of the frame covered by the selected color",
+          "explain": "More of the selected color makes the tone brighter.",
+          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
+        },
+        "pan": {
+          "feature": "centroidX",
+          "min": -0.8,
+          "max": 0.8,
+          "drivenBy": "Where the selected color sits, left to right",
+          "explain": "If the selected color is mostly on the left of the picture, the sound moves left, and the same for the right.",
+          "bounds": "80% left to 80% right"
+        },
+        "texture": {
+          "feature": "change",
+          "max": 0.6,
+          "drivenBy": "How much the picture changed since the last sample",
+          "explain": "A soft, low rush of air appears only when the picture is changing quickly. Most of the time it is silent.",
+          "bounds": "Very quiet, and silent for small changes"
+        }
+      },
+      "source": {
+        "name": "Global Temperature Anomalies from 1880 to 2025, NASA Scientific Visualization Studio (visualization 5603)",
+        "url": "https://svs.gsfc.nasa.gov/5603/",
+        "attribution": "NASA's Scientific Visualization Studio. Scientific consulting by Gavin A. Schmidt (NASA/GSFC GISS). Visualizations by Mark SubbaRao (NASA/GSFC).",
+        "license": "NASA media. Credit NASA's Scientific Visualization Studio and follow NASA's media usage guidelines.",
+        "accessed": "2026-11-15"
+      },
+      "limitations": [
+        "This sound is derived from image features. Color on screen is a picture of the data, not the measurement itself, so legends, labels and the map outline also affect the sound.",
+        "For the measured values, listen to the 'from NASA data' item, which uses the GISTEMP numbers behind this map.",
+        "The year shown on screen is not read by the app. The animation runs from 1880 to 2025 at a steady pace over one minute."
+      ],
+      "timeRange": "1880 to 2025"
+    },
+    {
+      "id": "svs-4993-dixie",
+      "kind": "video",
+      "derivedFrom": "image-features",
+      "title": "Spread of the Dixie Fire, 2021 (from NASA frames)",
+      "description": "NASA's animation of the Dixie Fire in California from 14 July to 22 October 2021, updated every 12 hours from satellite fire detections. Yellow lines mark recent fire fronts (the newest is brightest), red dots mark active fire detections, and grey shading shows the total area burned. A graph on screen tracks the cumulative burned area. The sound is computed live from the colors of each frame.",
+      "summary": "The fire begins as a small patch in mid-July. Through late July and early August the grey burned area spreads quickly across the map while the view pulls back to keep it in frame. In mid-August active fire is burning along the northern and eastern edges. From September the red detections become few, and by 30 September none are visible; the graph of burned area has levelled off. The final frame overlays the outlines of all the earlier fire fronts.",
+      "keyMoments": [],
+      "timing": {
+        "sampleSeconds": 0.08
+      },
+      "visual": {
+        "type": "video",
+        "local": "assets/clips/dixie_fire.mp4",
+        "remote": "https://svs.gsfc.nasa.gov/vis/a000000/a004900/a004993/Dixie_fire_2021_4x_1080p30.mp4"
+      },
+      "colorTarget": "fire",
+      "featureRanges": {
+        "brightness": [
+          0.29,
+          0.38
+        ],
+        "colorAmount": [
+          0,
+          0.012
+        ],
+        "change": [
+          0,
+          0.04
+        ],
+        "warmth": [
+          0,
+          1
+        ],
+        "centroidX": [
+          0.2,
+          0.8
+        ]
+      },
+      "mapping": {
+        "waveform": "triangle",
+        "pitch": {
+          "feature": "colorAmount",
+          "curve": "quantized",
+          "fMin": 220,
+          "fMax": 880,
+          "scale": "pentatonicMinor",
+          "root": 57,
+          "drivenBy": "Share of the frame showing vivid red (active fire detections)",
+          "explain": "More active fire on screen, higher note. No active fire, the lowest note.",
+          "bounds": "220–880 Hz (A3 to A5), snapped to a five-note scale"
+        },
+        "density": {
+          "feature": "change",
+          "minRate": 0.5,
+          "maxRate": 6,
+          "drivenBy": "How much the picture changed since the last sample",
+          "explain": "When the burned area is growing quickly the notes come faster. When the fire stalls they slow down.",
+          "bounds": "From one note every two seconds up to six notes a second"
+        },
+        "loudness": {
+          "feature": "brightness",
+          "min": 0.4,
+          "max": 0.85,
+          "drivenBy": "Overall brightness of the frame",
+          "explain": "A brighter picture sounds a little louder.",
+          "bounds": "Always under a fixed ceiling, with a volume control"
+        },
+        "timbre": {
+          "feature": "colorAmount",
+          "min": 0.2,
+          "max": 0.85,
+          "drivenBy": "Share of the frame showing vivid red",
+          "explain": "More active fire makes the tone brighter and sharper.",
+          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
+        },
+        "pan": {
+          "feature": "centroidX",
+          "min": -0.8,
+          "max": 0.8,
+          "drivenBy": "Where the vivid red sits, left to right",
+          "explain": "If the active fire is mostly on the left of the map, the sound moves left, and the same for the right.",
+          "bounds": "80% left to 80% right"
+        },
+        "texture": {
+          "feature": "change",
+          "max": 0.6,
+          "drivenBy": "How much the picture changed since the last sample",
+          "explain": "A soft, low rush of air appears only when the picture is changing quickly. Most of the time it is silent.",
+          "bounds": "Very quiet, and silent for small changes"
+        }
+      },
+      "source": {
+        "name": "Spread of the Dixie Fire - 2021, NASA Scientific Visualization Studio (visualization 4993)",
+        "url": "https://svs.gsfc.nasa.gov/4993/",
+        "attribution": "NASA's Scientific Visualization Studio",
+        "license": "NASA media. Credit NASA's Scientific Visualization Studio and follow NASA's media usage guidelines.",
+        "accessed": "2026-11-15",
+        "related": "Part of the Earth Information Center gallery, https://svs.gsfc.nasa.gov/gallery/earth-information-center/"
+      },
+      "limitations": [
+        "This sound is derived from image features. It follows vivid red on screen and how fast the picture changes, not the satellite fire measurements themselves.",
+        "The camera pulls back during the first weeks, which also changes the picture and so adds to the rhythm there.",
+        "The on-screen graph and labels are part of the picture and can affect the sound.",
+        "This is the 4x-speed version of NASA's animation."
+      ],
+      "timeRange": "14 July to 22 October 2021"
+    },
+    {
+      "id": "svs-5196-co2",
+      "kind": "video",
+      "derivedFrom": "image-features",
+      "title": "Global carbon dioxide, January to March 2020 (from NASA frames)",
+      "description": "NASA's animation of carbon dioxide in the atmosphere from January through March 2020, from a high-resolution Earth system model. The camera flies low through hazy brown-orange plumes over North America, then pulls back to show the globe. The sound is computed live from the colors of each frame.",
+      "summary": "For most of the flight the picture is dark and hazy, with orange plumes drifting past. Near the end the camera pulls back, the globe and snow-covered land come into view, and bright orange hot spots mark strong sources along the west coast of North America.",
+      "keyMoments": [],
+      "timing": {
+        "sampleSeconds": 0.08
+      },
+      "visual": {
+        "type": "video",
+        "local": "assets/clips/carbon_dioxide.mp4",
+        "remote": "https://svs.gsfc.nasa.gov/vis/a000000/a005100/a005196/dyamondPointCloud_12-4-2023b_dyamond_co2_anim_globe_tilt_1080p30.mp4"
+      },
+      "colorTarget": "fire",
+      "featureRanges": {
+        "brightness": [
+          0.055,
+          0.23
+        ],
+        "colorAmount": [
+          0,
+          0.005
+        ],
+        "change": [
+          0,
+          0.035
+        ],
+        "warmth": [
+          0,
+          1
+        ],
+        "centroidX": [
+          0.15,
+          0.65
+        ]
+      },
+      "mapping": {
+        "waveform": "triangle",
+        "pitch": {
+          "feature": "brightness",
+          "curve": "quantized",
+          "fMin": 220,
+          "fMax": 880,
+          "scale": "pentatonicMinor",
+          "root": 57,
+          "drivenBy": "Overall brightness of the frame",
+          "explain": "A brighter picture, higher note. A darker picture, lower note.",
+          "bounds": "220–880 Hz (A3 to A5), snapped to a five-note scale"
+        },
+        "density": {
+          "feature": "colorAmount",
+          "minRate": 0.5,
+          "maxRate": 6,
+          "drivenBy": "Share of the frame showing vivid orange-red hot spots",
+          "explain": "More hot spots on screen, faster notes.",
+          "bounds": "From one note every two seconds up to six notes a second"
+        },
+        "loudness": {
+          "feature": "brightness",
+          "min": 0.4,
+          "max": 0.85,
+          "drivenBy": "Overall brightness of the frame",
+          "explain": "A brighter picture sounds a little louder.",
+          "bounds": "Always under a fixed ceiling, with a volume control"
+        },
+        "timbre": {
+          "feature": "colorAmount",
+          "min": 0.2,
+          "max": 0.85,
+          "drivenBy": "Share of the frame showing vivid orange-red hot spots",
+          "explain": "More hot spots make the tone brighter.",
+          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
+        },
+        "pan": {
+          "feature": "centroidX",
+          "min": -0.8,
+          "max": 0.8,
+          "drivenBy": "Where the hot spots sit, left to right",
+          "explain": "If the hot spots are mostly on the left, the sound moves left, and the same for the right.",
+          "bounds": "80% left to 80% right"
+        },
+        "texture": {
+          "feature": "change",
+          "max": 0.6,
+          "drivenBy": "How much the picture changed since the last sample",
+          "explain": "A soft, low rush of air appears only when the picture is changing quickly. Most of the time it is silent.",
+          "bounds": "Very quiet, and silent for small changes"
+        }
+      },
+      "source": {
+        "name": "DYAMOND Global Carbon Dioxide, NASA Scientific Visualization Studio (visualization 5196)",
+        "url": "https://svs.gsfc.nasa.gov/5196/",
+        "attribution": "NASA's Scientific Visualization Studio",
+        "license": "NASA media. Credit NASA's Scientific Visualization Studio and follow NASA's media usage guidelines.",
+        "accessed": "2026-11-15",
+        "related": "Part of the Earth Information Center gallery, https://svs.gsfc.nasa.gov/gallery/earth-information-center/"
+      },
+      "limitations": [
+        "This sound is derived from image features. The exact concentration each color stands for is given on NASA's separate color bar, not in the video.",
+        "Most of the change in this sound comes from the camera moving through the scene, not from the carbon dioxide changing. Treat it as a way to experience the visualization rather than a reading of the data.",
+        "The animation shows model output, not direct measurements."
+      ],
+      "timeRange": "January to March 2020"
+    },
+    {
+      "id": "svs-3912-ocean",
+      "kind": "video",
+      "derivedFrom": "image-features",
+      "title": "Ocean surface currents and temperature, 2007–2008 (from NASA frames)",
+      "description": "NASA's animation of global sea surface currents from 25 March 2007 to 3 March 2008. The flow lines are colored by sea surface temperature: blue for 0 °C, through green and yellow, to red for 32 °C. The sound is computed live from the colors of each frame.",
+      "summary": "A flat map of the world's oceans, with land in grey. Swirling flow lines cover the water: red and orange along the tropics where the sea is warmest, green and yellow at middle latitudes, and blue near the poles. Over the year the pattern changes gently. The warm band strengthens and weakens, and the reddest water shifts between the western Pacific, the Indian Ocean and the tropical Atlantic.",
+      "keyMoments": [],
+      "timing": {
+        "sampleSeconds": 0.08
+      },
+      "visual": {
+        "type": "video",
+        "local": "assets/clips/ocean_currents.mp4",
+        "remote": "https://svs.gsfc.nasa.gov/vis/a000000/a003900/a003912/ecco2_sst_flow.webmhd.webm"
+      },
+      "colorTarget": "fire",
+      "featureRanges": {
+        "brightness": [
+          0.187,
+          0.204
+        ],
+        "colorAmount": [
+          0.001,
+          0.006
+        ],
+        "change": [
+          0.002,
+          0.02
+        ],
+        "warmth": [
+          0.76,
+          0.88
+        ],
+        "centroidX": [
+          0.48,
+          0.9
+        ]
+      },
+      "mapping": {
+        "waveform": "triangle",
+        "pitch": {
+          "feature": "warmth",
+          "curve": "quantized",
+          "fMin": 220,
+          "fMax": 880,
+          "scale": "pentatonicMinor",
+          "root": 57,
+          "drivenBy": "Balance of warm colors against cool colors in the frame",
+          "explain": "More warm-colored water on screen, higher note. More cool-colored water, lower note.",
+          "bounds": "220–880 Hz (A3 to A5), snapped to a five-note scale"
+        },
+        "density": {
+          "feature": "colorAmount",
+          "minRate": 0.5,
+          "maxRate": 6,
+          "drivenBy": "Share of the frame showing vivid red (the warmest water)",
+          "explain": "The more of the very warmest water on screen, the faster the notes repeat.",
+          "bounds": "From one note every two seconds up to six notes a second"
+        },
+        "loudness": {
+          "feature": "brightness",
+          "min": 0.4,
+          "max": 0.85,
+          "drivenBy": "Overall brightness of the frame",
+          "explain": "A brighter picture sounds a little louder.",
+          "bounds": "Always under a fixed ceiling, with a volume control"
+        },
+        "timbre": {
+          "feature": "colorAmount",
+          "min": 0.2,
+          "max": 0.85,
+          "drivenBy": "Share of the frame showing vivid red (the warmest water)",
+          "explain": "More of the warmest water makes the tone brighter.",
+          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
+        },
+        "pan": {
+          "feature": "centroidX",
+          "min": -0.8,
+          "max": 0.8,
+          "drivenBy": "Where the vivid red sits, left to right",
+          "explain": "If the warmest water is mostly on the left of the map, the sound moves left, and the same for the right.",
+          "bounds": "80% left to 80% right"
+        },
+        "texture": {
+          "feature": "change",
+          "max": 0.6,
+          "drivenBy": "How much the picture changed since the last sample",
+          "explain": "A soft, low rush of air appears only when the picture is changing quickly. Most of the time it is silent.",
+          "bounds": "Very quiet, and silent for small changes"
+        }
+      },
+      "source": {
+        "name": "Global Sea Surface Currents and Temperature, NASA Scientific Visualization Studio (visualization 3912)",
+        "url": "https://svs.gsfc.nasa.gov/3912/",
+        "attribution": "NASA/Goddard Space Flight Center Scientific Visualization Studio",
+        "license": "NASA media. Credit as shown and follow NASA's media usage guidelines.",
+        "accessed": "2026-11-15",
+        "related": "Part of the Earth Information Center gallery, https://svs.gsfc.nasa.gov/gallery/earth-information-center/"
+      },
+      "limitations": [
+        "This sound is derived from image features. It follows the balance of warm and cool colors on screen, not the temperature values themselves.",
+        "The whole-ocean picture changes only a little over the year, so the app stretches those small changes to make them audible. The size of a change in the sound is not the size of the change in the ocean."
+      ],
+      "timeRange": "25 March 2007 to 3 March 2008"
+    },
+    {
+      "id": "svs-5011-lightning",
+      "kind": "video",
+      "derivedFrom": "image-features",
+      "title": "Lightning seen from the Space Station, 2017–2023 (from NASA frames)",
+      "description": "NASA's animation of lightning detected by the Lightning Imaging Sensor on the International Space Station from January 2017 through July 2023. A moving 10-day window brings out the seasonal pattern. The sound is computed live from the colors of each frame.",
+      "summary": "The animation begins on 1 March 2017, following the Space Station's track across a dark Earth as the first flashes appear as yellow dots. It then shows the whole globe slowly turning while a 10-day window moves through the years to 2023. Yellow dots gather thickly over land in the tropics, especially central Africa, South America and south-east Asia, and thin out over the open ocean. The clusters shift north and south with the seasons.",
+      "keyMoments": [],
+      "timing": {
+        "sampleSeconds": 0.08
+      },
+      "visual": {
+        "type": "video",
+        "local": "assets/clips/lightning.mp4",
+        "remote": "https://svs.gsfc.nasa.gov/vis/a000000/a005000/a005011/iss_lightning_sphere_07312023.mp4"
+      },
+      "colorTarget": "yellow",
+      "featureRanges": {
+        "brightness": [
+          0.02,
+          0.13
+        ],
+        "colorAmount": [
+          0,
+          0.008
+        ],
+        "change": [
+          0,
+          0.02
+        ],
+        "warmth": [
+          0,
+          1
+        ],
+        "centroidX": [
+          0.3,
+          0.84
+        ]
+      },
+      "mapping": {
+        "waveform": "triangle",
+        "pitch": {
+          "feature": "colorAmount",
+          "curve": "quantized",
+          "fMin": 220,
+          "fMax": 880,
+          "scale": "pentatonicMinor",
+          "root": 57,
+          "drivenBy": "Share of the frame showing vivid yellow (lightning)",
+          "explain": "More lightning on screen, higher note.",
+          "bounds": "220–880 Hz (A3 to A5), snapped to a five-note scale"
+        },
+        "density": {
+          "feature": "colorAmount",
+          "minRate": 0.5,
+          "maxRate": 6,
+          "drivenBy": "Share of the frame showing vivid yellow (lightning)",
+          "explain": "More lightning on screen, faster notes.",
+          "bounds": "From one note every two seconds up to six notes a second"
+        },
+        "loudness": {
+          "feature": "brightness",
+          "min": 0.4,
+          "max": 0.85,
+          "drivenBy": "Overall brightness of the frame",
+          "explain": "A brighter picture sounds a little louder.",
+          "bounds": "Always under a fixed ceiling, with a volume control"
+        },
+        "timbre": {
+          "feature": "colorAmount",
+          "min": 0.2,
+          "max": 0.85,
+          "drivenBy": "Share of the frame showing vivid yellow (lightning)",
+          "explain": "More lightning makes the tone brighter.",
+          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
+        },
+        "pan": {
+          "feature": "centroidX",
+          "min": -0.8,
+          "max": 0.8,
+          "drivenBy": "Where the yellow dots sit, left to right",
+          "explain": "If the lightning is mostly on the left, the sound moves left, and the same for the right.",
+          "bounds": "80% left to 80% right"
+        },
+        "texture": {
+          "feature": "change",
+          "max": 0.6,
+          "drivenBy": "How much the picture changed since the last sample",
+          "explain": "A soft, low rush of air appears only when the picture is changing quickly. Most of the time it is silent.",
+          "bounds": "Very quiet, and silent for small changes"
+        }
+      },
+      "source": {
+        "name": "Lightning Events Detected from the International Space Station (ISS) 2017-2023, NASA Scientific Visualization Studio (visualization 5011)",
+        "url": "https://svs.gsfc.nasa.gov/5011/",
+        "attribution": "NASA's Scientific Visualization Studio",
+        "license": "NASA media. Credit as shown and follow NASA's media usage guidelines.",
+        "accessed": "2026-11-15",
+        "related": "Part of the Earth Information Center gallery, https://svs.gsfc.nasa.gov/gallery/earth-information-center/"
+      },
+      "limitations": [
+        "This sound is derived from image features. It follows the yellow dots on screen, not the lightning counts themselves.",
+        "The globe turns during the animation, so lightning-rich regions come into view and leave it. Some of the rise and fall you hear is the turning globe, not a change in lightning.",
+        "The sensor sees only the part of Earth beneath the Space Station's orbit, so high latitudes are not covered."
+      ],
+      "timeRange": "January 2017 to July 2023"
+    },
+    {
+      "id": "svs-4960-river",
+      "kind": "video",
+      "derivedFrom": "image-features",
+      "title": "An atmospheric river in 3D (from NASA frames)",
+      "description": "NASA's three-dimensional view of an atmospheric river: a band of tropical moisture that forms over the ocean and moves toward the western United States, with clouds and precipitation from NASA's MERRA-2 reanalysis. Blue shading shows water vapor being carried along. The sound is computed live from the colors of each frame.",
+      "summary": "The animation opens on the whole Earth wrapped in white cloud, then moves in over the north-east Pacific. A long blue band, labelled as the atmospheric river, stretches from the tropics toward the west coast of North America, curving around an area of high pressure marked H. Side-on views show the moisture as a layer above the ocean, and a close-up shows it being forced upward where it meets the coastal mountains. The animation ends by pulling back to the full globe.",
+      "keyMoments": [],
+      "timing": {
+        "sampleSeconds": 0.08
+      },
+      "visual": {
+        "type": "video",
+        "local": "assets/clips/atmospheric_river.mp4",
+        "remote": "https://svs.gsfc.nasa.gov/vis/a000000/a004900/a004960/atmos_river_HD.webm"
+      },
+      "colorTarget": "cool",
+      "featureRanges": {
+        "brightness": [
+          0.14,
+          0.41
+        ],
+        "colorAmount": [
+          0,
+          0.68
+        ],
+        "change": [
+          0,
+          0.045
+        ],
+        "warmth": [
+          0,
+          1
+        ],
+        "centroidX": [
+          0.28,
+          0.67
+        ]
+      },
+      "mapping": {
+        "waveform": "triangle",
+        "pitch": {
+          "feature": "colorAmount",
+          "curve": "quantized",
+          "fMin": 220,
+          "fMax": 880,
+          "scale": "pentatonicMinor",
+          "root": 57,
+          "drivenBy": "Share of the frame covered by blue shading",
+          "explain": "More blue water-vapor shading on screen, higher note.",
+          "bounds": "220–880 Hz (A3 to A5), snapped to a five-note scale"
+        },
+        "density": {
+          "feature": "colorAmount",
+          "minRate": 0.5,
+          "maxRate": 6,
+          "drivenBy": "Share of the frame covered by blue shading",
+          "explain": "More blue shading, faster notes.",
+          "bounds": "From one note every two seconds up to six notes a second"
+        },
+        "loudness": {
+          "feature": "brightness",
+          "min": 0.4,
+          "max": 0.85,
+          "drivenBy": "Overall brightness of the frame",
+          "explain": "A brighter picture sounds a little louder.",
+          "bounds": "Always under a fixed ceiling, with a volume control"
+        },
+        "timbre": {
+          "feature": "colorAmount",
+          "min": 0.2,
+          "max": 0.85,
+          "drivenBy": "Share of the frame covered by the selected color",
+          "explain": "More of the selected color makes the tone brighter.",
+          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
+        },
+        "pan": {
+          "feature": "centroidX",
+          "min": -0.8,
+          "max": 0.8,
+          "drivenBy": "Where the blue shading sits, left to right",
+          "explain": "If the moisture is mostly on the left, the sound moves left, and the same for the right.",
+          "bounds": "80% left to 80% right"
+        },
+        "texture": {
+          "feature": "change",
+          "max": 0.6,
+          "drivenBy": "How much the picture changed since the last sample",
+          "explain": "A soft, low rush of air appears only when the picture is changing quickly. Most of the time it is silent.",
+          "bounds": "Very quiet, and silent for small changes"
+        }
+      },
+      "source": {
+        "name": "A 3D View of an Atmospheric River from an Earth System Model, NASA Scientific Visualization Studio (visualization 4960)",
+        "url": "https://svs.gsfc.nasa.gov/4960/",
+        "attribution": "NASA's Scientific Visualization Studio",
+        "license": "NASA media. Credit as shown and follow NASA's media usage guidelines.",
+        "accessed": "2026-11-15",
+        "related": "Part of the Earth Information Center gallery, https://svs.gsfc.nasa.gov/gallery/earth-information-center/"
+      },
+      "limitations": [
+        "This sound is derived from image features. It follows the blue shading on screen, not the water vapor values themselves.",
+        "The camera cuts between several viewpoints, and each cut changes how much blue is on screen. Some of the changes you hear are the camera, not the weather.",
+        "This is the longest item, at nearly five minutes."
+      ]
+    }
+  ],
+  "userTemplate": {
+    "derivedFrom": "image-features",
+    "description": "A video or set of frames from your own computer. The sound is computed live from the colors of each frame.",
+    "summary": "No written description is available for files you load yourself. Add one before sharing.",
+    "keyMoments": [],
+    "timing": {
+      "sampleSeconds": 0.08,
+      "framesPerSecond": 4
+    },
+    "colorTarget": "warm",
+    "featureRanges": {
+      "brightness": [
+        0.05,
+        0.75
+      ],
+      "colorAmount": [
+        0,
+        0.5
+      ],
+      "change": [
+        0,
+        0.04
+      ],
+      "warmth": [
+        0,
+        1
+      ],
+      "centroidX": [
+        0,
+        1
+      ]
+    },
+    "mappingFrom": "svs-5603-frames",
+    "limitations": [
+      "This sound is derived from image features. Color on screen is a picture of the data, not the measurement itself.",
+      "Check the reuse terms of the original visualization and credit its source."
+    ]
+  }
+}
