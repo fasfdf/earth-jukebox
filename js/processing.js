@@ -146,8 +146,11 @@ export function wavelengthToRgb(nm) {
 //   trend    : smoothed measurement, same normalization
 //   change   : size of the step-to-step change, normalized by the largest change
 //   progress : position in time, 0 at the start and 1 at the end
-export function buildDataTrack(labels, values, { trendWindow = 9 } = {}) {
-  const { min, max, norm } = normalizeSeries(values);
+// Pass `min` and `max` to put several series on one shared scale (for comparisons).
+export function buildDataTrack(labels, values, { trendWindow = 9, min: fixedMin, max: fixedMax } = {}) {
+  const min = fixedMin ?? Math.min(...values);
+  const max = fixedMax ?? Math.max(...values);
+  const norm = values.map((v) => normalize(v, min, max));
   const trend = movingAverage(values, trendWindow).map((v) => normalize(v, min, max));
   const diffs = values.map((v, i) => (i === 0 ? 0 : Math.abs(v - values[i - 1])));
   const maxDiff = Math.max(...diffs) || 1;
@@ -159,6 +162,18 @@ export function buildDataTrack(labels, values, { trendWindow = 9 } = {}) {
     progress: n > 1 ? i / (n - 1) : 0,
   }));
   return { labels, values, min, max, features, length: n };
+}
+
+// Step labels are either a year (number) or a month ("2013-05").
+const MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+export function formatLabel(label) {
+  const m = /^(\d{4})-(\d{2})$/.exec(String(label));
+  return m ? `${MONTH_NAMES[Number(m[2]) - 1]} ${m[1]}` : String(label);
+}
+export function isDecadeStart(label) {
+  if (typeof label === "number") return label % 10 === 0;
+  const m = /^(\d{4})-(\d{2})$/.exec(String(label));
+  return !!m && m[2] === "01" && Number(m[1]) % 10 === 0;
 }
 
 // Linear interpolation between two neighbouring steps of a track.

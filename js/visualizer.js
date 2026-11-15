@@ -1,6 +1,6 @@
 // visualizer.js — displays the data, the frames, and the audio waveform.
 
-import { clamp } from "./processing.js";
+import { clamp, formatLabel } from "./processing.js";
 
 // Match the canvas pixel size to its on-screen size (sharp on high-density displays).
 export function fitCanvas(canvas) {
@@ -82,6 +82,22 @@ export function drawDataStage(canvas, track, item, position, { reducedMotion = f
     ctx.stroke();
   }
 
+  // Second series of a comparison: dashed line on the same scale.
+  if (track.second) {
+    for (const [color, width, dash] of [["rgba(255,255,255,0.9)", 5, []], ["#0b1020", 2, [7, 5]]]) {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width * ratio;
+      ctx.setLineDash(dash.map((d) => d * ratio));
+      ctx.beginPath();
+      for (let i = 0; i <= shown; i++) {
+        if (i === 0) ctx.moveTo(x(i), y(track.second.values[i]));
+        else ctx.lineTo(x(i), y(track.second.values[i]));
+      }
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+  }
+
   // Playhead.
   ctx.fillStyle = "#0b1020";
   ctx.strokeStyle = "#ffffff";
@@ -99,22 +115,26 @@ export function drawDataStage(canvas, track, item, position, { reducedMotion = f
   }
 
   // Current step label on a solid plate for contrast.
-  const label = `${track.labels[index]}`;
-  const value = formatValue(track.values[index], item);
+  const label = formatLabel(track.labels[index]);
+  const names = item.data.names || [];
+  const lines = track.second
+    ? [`${names[0]}: ${formatValue(track.values[index], item)}`, `${names[1]}: ${formatValue(track.second.values[index], item)}`]
+    : [formatValue(track.values[index], item)];
+  const value = lines[0];
   ctx.font = `700 ${Math.round(34 * ratio)}px system-ui, sans-serif`;
   const labelW = ctx.measureText(label).width;
   ctx.font = `600 ${Math.round(18 * ratio)}px system-ui, sans-serif`;
-  const valueW = ctx.measureText(value).width;
+  const valueW = Math.max(...lines.map((t) => ctx.measureText(t).width));
   const plateW = Math.max(labelW, valueW) + 28 * ratio;
   ctx.fillStyle = "rgba(7,11,24,0.88)";
-  ctx.fillRect(14 * ratio, 14 * ratio, plateW, 78 * ratio);
+  ctx.fillRect(14 * ratio, 14 * ratio, plateW, (78 + (lines.length - 1) * 24) * ratio);
   ctx.fillStyle = "#ffffff";
   ctx.textBaseline = "top";
   ctx.font = `700 ${Math.round(34 * ratio)}px system-ui, sans-serif`;
   ctx.fillText(label, 28 * ratio, 22 * ratio);
   ctx.font = `600 ${Math.round(18 * ratio)}px system-ui, sans-serif`;
   ctx.fillStyle = "#ffd28a";
-  ctx.fillText(value, 28 * ratio, 62 * ratio);
+  lines.forEach((text, i) => ctx.fillText(text, 28 * ratio, (62 + i * 24) * ratio));
 }
 
 // Draws one image frame, letterboxed to fit.

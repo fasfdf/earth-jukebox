@@ -36,7 +36,7 @@
         <li>Items under <strong>From NASA measurements</strong> turn the measured numbers into sound: every note is a real value. Start with these.</li>
         <li>Items under <strong>From video colors</strong> turn the colors of a NASA animation into sound. They let you explore a visualization by ear, but color is only a picture of the data, not the measurement.</li>
       </ol>
-      <p class="hint">Keyboard: Tab moves between controls, Space plays or pauses, and the arrow keys move the timeline when it has focus.</p>
+      <p class="hint">Keyboard: Tab moves between controls, Space plays or pauses, and the arrow keys move the timeline one step at a time when it has focus. On the measurement items, “Previous year” and “Next year” let you explore at your own pace: each press plays that year's note and reads out its value. “Hear the reference notes” plays the lowest and highest notes first, so you know the range before you listen. “Guided tour” stops the sound at each key moment so its description can be read or spoken without talking over the notes, then carries on. If you use a screen reader, leave “Read the tour aloud” off: your screen reader will read each description.</p>
     </section>
 
     <section id="player" class="card player" aria-labelledby="playerHeading">
@@ -64,6 +64,8 @@
       <div class="transport" role="group" aria-label="Playback controls">
         <button id="playBtn" type="button" class="primary">Play</button>
         <button id="restartBtn" type="button">Restart</button>
+        <button id="prevBtn" type="button" hidden>Previous year</button>
+        <button id="nextBtn" type="button" hidden>Next year</button>
         <div class="field grow">
           <label for="timeline">Timeline</label>
           <input id="timeline" type="range" min="0" max="1" step="0.01" value="0">
@@ -97,8 +99,12 @@
           <label for="colorTarget">Color to follow</label>
           <select id="colorTarget"></select>
         </div>
+        <button id="legendBtn" type="button">Hear the reference notes</button>
+        <label class="check" id="decadesLabel" hidden><input id="decades" type="checkbox" checked> Tick at each decade</label>
         <label class="check"><input id="reducedMotion" type="checkbox"> Reduce motion</label>
         <label class="check"><input id="announce" type="checkbox"> Announce key moments</label>
+        <label class="check"><input id="guided" type="checkbox"> Guided tour: pause at key moments</label>
+        <label class="check"><input id="speak" type="checkbox"> Read the tour aloud</label>
         <button id="exportBtn" type="button">Download audio (WAV)</button>
       </div>
 
@@ -114,6 +120,7 @@
         <p id="itemDescription"></p>
         <h3>What happens, in words</h3>
         <p id="itemSummary"></p>
+        <div id="aboutBlock"></div>
         <p id="momentNow" class="moment-now" hidden></p>
         <div id="momentsBlock" hidden>
           <h3>Key moments</h3>

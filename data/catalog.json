@@ -120,7 +120,149 @@
         "Values were read from the NASA GISS file on 15 November 2026. NASA revises recent years slightly over time; run tools/update_data.py to refresh them."
       ],
       "timeRange": "1880 to 2025, one value per year",
-      "group": "measurements"
+      "group": "measurements",
+      "about": [
+        {
+          "heading": "How it is measured",
+          "text": "NASA's Goddard Institute for Space Studies combines air temperatures from thousands of weather stations on land with sea surface temperatures from ships and buoys. Each value is an anomaly: the difference from the 1951–1980 average."
+        },
+        {
+          "heading": "Why it matters",
+          "text": "The global average is the most widely used single measure of how much the planet has warmed."
+        }
+      ]
+    },
+    {
+      "id": "gistemp-monthly",
+      "kind": "data",
+      "derivedFrom": "scientific-data",
+      "title": "Global temperature month by month, 1880–2026 (from NASA data)",
+      "description": "Every month from January 1880 to October 2026, from NASA's global temperature record, compared with the 1951–1980 average. A continuous tone follows the monthly value, and two plucked notes mark each year, in January and in July.",
+      "summary": "The yearly version of this record sounds like a steady climb. Month by month it is restless: the tone jitters constantly, because single months swing by several tenths of a degree. Under the jitter the same climb is there. The last month colder than the 1951–1980 average was September 1992. A month first reached 1 °C above that average in January 2007, and every month since June 2023 has been at least 1 °C above it. The highest month in the record is the most recent one, October 2026, at about 1.55 °C.",
+      "keyMoments": [
+        {
+          "at": "1880-01",
+          "text": "January 1880: the record begins."
+        },
+        {
+          "at": "1893-01",
+          "text": "January 1893: the coldest month in the record, about 0.81 °C below the average."
+        },
+        {
+          "at": "1992-09",
+          "text": "September 1992: the last month colder than the 1951–1980 average."
+        },
+        {
+          "at": "2007-01",
+          "text": "January 2007: a month reaches 1 °C above the average for the first time."
+        },
+        {
+          "at": "2016-02",
+          "text": "February 2016: about 1.36 °C above the average, during a strong El Niño."
+        },
+        {
+          "at": "2023-05",
+          "text": "May 2023: the last month less than 1 °C above the average."
+        },
+        {
+          "at": "2026-10",
+          "text": "October 2026: the warmest month in the record, about 1.55 °C above the average."
+        }
+      ],
+      "data": {
+        "file": "data/gistemp_monthly.json",
+        "unit": "°C",
+        "valueLabel": "Temperature anomaly",
+        "stepLabel": "Month",
+        "signed": true,
+        "decimals": 2
+      },
+      "timing": {
+        "stepSeconds": 0.03,
+        "pluckOn": [
+          "-01",
+          "-07"
+        ]
+      },
+      "visual": {
+        "type": "stripes",
+        "caption": "A chart with one stripe per month. Blue is cooler than the 1951–1980 average and red is warmer; the line and the label show the same values, so nothing depends on color alone."
+      },
+      "mapping": {
+        "waveform": "triangle",
+        "pitch": {
+          "feature": "value",
+          "curve": "log",
+          "fMin": 220,
+          "fMax": 880,
+          "scale": "pentatonicMinor",
+          "root": 57,
+          "drivenBy": "Temperature anomaly for the month",
+          "explain": "Warmer month, higher pitch. The tone slides smoothly from month to month.",
+          "bounds": "220–880 Hz (A3 to A5), not snapped to a scale"
+        },
+        "loudness": {
+          "feature": "trend",
+          "min": 0.45,
+          "max": 0.9,
+          "drivenBy": "Nine-month average temperature",
+          "explain": "As the long-term level rises, the sound gets gently louder.",
+          "bounds": "Always between half and full level, under a fixed ceiling"
+        },
+        "timbre": {
+          "feature": "value",
+          "min": 0.15,
+          "max": 0.9,
+          "drivenBy": "Temperature anomaly for the month",
+          "explain": "Warmer months sound brighter.",
+          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
+        },
+        "pan": {
+          "feature": "progress",
+          "min": -0.7,
+          "max": 0.7,
+          "drivenBy": "Position in time",
+          "explain": "The sound travels from your left ear (1880) to your right ear (2026).",
+          "bounds": "70% left to 70% right"
+        },
+        "texture": {
+          "feature": "change",
+          "max": 0,
+          "drivenBy": "Change from the previous year",
+          "explain": "Not used for this item.",
+          "bounds": "Silent"
+        },
+        "density": {
+          "drivenBy": "The calendar",
+          "explain": "Two plucked notes a year: January and July.",
+          "bounds": "Fixed rhythm"
+        }
+      },
+      "source": {
+        "name": "GISS Surface Temperature Analysis (GISTEMP v4), NASA Goddard Institute for Space Studies",
+        "url": "https://data.giss.nasa.gov/gistemp/",
+        "attribution": "GISTEMP Team, 2026: GISS Surface Temperature Analysis (GISTEMP), version 4. NASA Goddard Institute for Space Studies.",
+        "license": "NASA data, free to reuse with credit. See the GISTEMP page for citation guidance.",
+        "accessed": "2026-11-15",
+        "related": "Shown as a map animation in NASA SVS visualization 5603, https://svs.gsfc.nasa.gov/5603/"
+      },
+      "limitations": [
+        "The most recent months are preliminary and are often revised slightly by NASA.",
+        "The pitch is not snapped to a scale here, so that month-to-month movement can be heard. The pitch range also differs from the yearly item, so compare the numbers, not the notes.",
+        "This is the global average only. It says nothing about where on Earth the warming is."
+      ],
+      "timeRange": "January 1880 to October 2026, one value per month",
+      "group": "measurements",
+      "about": [
+        {
+          "heading": "How it is measured",
+          "text": "NASA's Goddard Institute for Space Studies combines air temperatures from thousands of weather stations on land with sea surface temperatures from ships and buoys. Each value is an anomaly: the difference from the 1951–1980 average."
+        },
+        {
+          "heading": "Why it matters",
+          "text": "The global average is the most widely used single measure of how much the planet has warmed."
+        }
+      ]
     },
     {
       "id": "arctic-temperature",
@@ -232,7 +374,250 @@
         "Early Arctic values rest on few weather stations and are less certain than recent ones."
       ],
       "timeRange": "1880 to 2025, one value per year",
-      "group": "measurements"
+      "group": "measurements",
+      "about": [
+        {
+          "heading": "How it is measured",
+          "text": "The same NASA analysis as the global record, averaged over the region north of 64° latitude."
+        },
+        {
+          "heading": "Why it matters",
+          "text": "The Arctic is warming faster than the planet as a whole, which affects sea ice, frozen ground and the Greenland ice sheet."
+        }
+      ]
+    },
+    {
+      "id": "compare-arctic-global",
+      "kind": "data",
+      "derivedFrom": "scientific-data",
+      "title": "Compare: the Arctic against the whole planet (from NASA data)",
+      "description": "Two NASA temperature records play at once on the same pitch scale: the Arctic (north of 64° latitude) in your left ear and the whole planet in your right ear. Because the scale is shared, you can hear directly how far apart they are.",
+      "summary": "For the first century the left ear leaps about while the right ear barely moves: the Arctic swings by more than a degree from year to year and the planet does not. From about 1990 the left ear pulls away upward. In 34 of the 36 years since 1990 the Arctic was further above its 1951–1980 average than the planet was. Over 2016–2025 the Arctic averaged about 2.6 °C above that average, against about 1.0 °C for the planet.",
+      "keyMoments": [
+        {
+          "at": 1887,
+          "text": "1887: the Arctic's coldest year, about 1.73 °C below average, while the planet was 0.36 °C below."
+        },
+        {
+          "at": 1938,
+          "text": "1938: an Arctic warm spell, about 1.52 °C above average, while the planet was at its average."
+        },
+        {
+          "at": 2004,
+          "text": "2004: the last year the Arctic was not further above its average than the planet."
+        },
+        {
+          "at": 2016,
+          "text": "2016: the widest gap. The Arctic was about 3.23 °C above average and the planet 1.01 °C."
+        },
+        {
+          "at": 2025,
+          "text": "2025: the Arctic at about 2.93 °C above average, the planet at 1.19 °C."
+        }
+      ],
+      "data": {
+        "file": "data/compare_arctic_global.json",
+        "unit": "°C",
+        "valueLabel": "Temperature anomaly",
+        "stepLabel": "Year",
+        "signed": true,
+        "decimals": 2,
+        "names": [
+          "Arctic",
+          "whole planet"
+        ]
+      },
+      "timing": {
+        "stepSeconds": 0.3
+      },
+      "visual": {
+        "type": "stripes",
+        "caption": "A chart with one stripe per year, colored by the Arctic value. The solid line is the Arctic and the dashed line is the whole planet; the label shows both values."
+      },
+      "mapping": {
+        "waveform": "triangle",
+        "pitch": {
+          "feature": "value",
+          "curve": "quantized",
+          "fMin": 220,
+          "fMax": 880,
+          "scale": "pentatonicMinor",
+          "root": 57,
+          "drivenBy": "Temperature anomaly for the year, both records on one shared scale",
+          "explain": "Warmer, higher note. The same note means the same value in both ears.",
+          "bounds": "220–880 Hz (A3 to A5), snapped to a five-note scale"
+        },
+        "loudness": {
+          "feature": "progress",
+          "min": 0.7,
+          "max": 0.7,
+          "drivenBy": "Nothing: held steady",
+          "explain": "Both records play at the same steady level, so neither drowns out the other.",
+          "bounds": "Fixed level, under a fixed ceiling"
+        },
+        "timbre": {
+          "feature": "value",
+          "min": 0.15,
+          "max": 0.9,
+          "drivenBy": "Temperature anomaly for the year",
+          "explain": "Warmer years sound brighter. The right-ear record also has a slightly buzzier tone so the two are easy to tell apart.",
+          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
+        },
+        "pan": {
+          "feature": "progress",
+          "min": -0.7,
+          "max": 0.7,
+          "drivenBy": "Which record",
+          "explain": "The Arctic is in your left ear and the whole planet is in your right ear. Headphones are recommended.",
+          "bounds": "75% left and 75% right"
+        },
+        "texture": {
+          "feature": "change",
+          "max": 0,
+          "drivenBy": "Change from the previous year",
+          "explain": "Not used for this item.",
+          "bounds": "Silent"
+        }
+      },
+      "source": {
+        "name": "GISS Surface Temperature Analysis (GISTEMP v4), NASA Goddard Institute for Space Studies",
+        "url": "https://data.giss.nasa.gov/gistemp/",
+        "attribution": "GISTEMP Team, 2026: GISS Surface Temperature Analysis (GISTEMP), version 4. NASA Goddard Institute for Space Studies.",
+        "license": "NASA data, free to reuse with credit. See the GISTEMP page for citation guidance.",
+        "accessed": "2026-11-15",
+        "related": "Shown as a map animation in NASA SVS visualization 5603, https://svs.gsfc.nasa.gov/5603/"
+      },
+      "limitations": [
+        "Each record is measured against its own 1951–1980 average, so this compares how much each has changed, not which place is hotter. The Arctic is of course far colder than the planet's average.",
+        "Use headphones or well-separated speakers. On a single speaker the two records blend together.",
+        "Early Arctic values rest on few weather stations and are less certain than recent ones."
+      ],
+      "timeRange": "1880 to 2025, one value per year",
+      "group": "measurements",
+      "about": [
+        {
+          "heading": "How it is measured",
+          "text": "Both records come from the same NASA analysis of weather-station and sea-surface temperatures. Each is compared with its own 1951–1980 average."
+        },
+        {
+          "heading": "Why it matters",
+          "text": "Hearing the two together shows what a single global number hides: warming is not spread evenly, and the far north is changing fastest."
+        }
+      ]
+    },
+    {
+      "id": "compare-hemispheres",
+      "kind": "data",
+      "derivedFrom": "scientific-data",
+      "title": "Compare: north half against south half of the planet (from NASA data)",
+      "description": "Two NASA temperature records play at once on the same pitch scale: the Northern Hemisphere in your left ear and the Southern Hemisphere in your right ear.",
+      "summary": "For a century the two ears stay close together, and from 1950 to 1985 the south was the further above its average in 19 of the 36 years. Since 1996 the north has been ahead every year and the gap has widened. Over 2016–2025 the north averaged about 1.29 °C above its 1951–1980 average and the south about 0.73 °C. The north has more land, and land warms faster than ocean.",
+      "keyMoments": [
+        {
+          "at": 1996,
+          "text": "1996: the last year the Southern Hemisphere was further above its average than the Northern."
+        },
+        {
+          "at": 1998,
+          "text": "1998: the Southern Hemisphere first reaches 0.5 °C above its average."
+        },
+        {
+          "at": 2015,
+          "text": "2015: the Northern Hemisphere first reaches 1 °C above its average."
+        },
+        {
+          "at": 2024,
+          "text": "2024: the warmest year for both. The north was about 1.65 °C above average and the south 0.92 °C."
+        }
+      ],
+      "data": {
+        "file": "data/compare_hemispheres.json",
+        "unit": "°C",
+        "valueLabel": "Temperature anomaly",
+        "stepLabel": "Year",
+        "signed": true,
+        "decimals": 2,
+        "names": [
+          "Northern Hemisphere",
+          "Southern Hemisphere"
+        ]
+      },
+      "timing": {
+        "stepSeconds": 0.3
+      },
+      "visual": {
+        "type": "stripes",
+        "caption": "A chart with one stripe per year, colored by the Northern Hemisphere value. The solid line is the Northern Hemisphere and the dashed line is the Southern Hemisphere; the label shows both values."
+      },
+      "mapping": {
+        "waveform": "triangle",
+        "pitch": {
+          "feature": "value",
+          "curve": "quantized",
+          "fMin": 220,
+          "fMax": 880,
+          "scale": "pentatonicMinor",
+          "root": 57,
+          "drivenBy": "Temperature anomaly for the year, both records on one shared scale",
+          "explain": "Warmer, higher note. The same note means the same value in both ears.",
+          "bounds": "220–880 Hz (A3 to A5), snapped to a five-note scale"
+        },
+        "loudness": {
+          "feature": "progress",
+          "min": 0.7,
+          "max": 0.7,
+          "drivenBy": "Nothing: held steady",
+          "explain": "Both records play at the same steady level, so neither drowns out the other.",
+          "bounds": "Fixed level, under a fixed ceiling"
+        },
+        "timbre": {
+          "feature": "value",
+          "min": 0.15,
+          "max": 0.9,
+          "drivenBy": "Temperature anomaly for the year",
+          "explain": "Warmer years sound brighter. The right-ear record also has a slightly buzzier tone so the two are easy to tell apart.",
+          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
+        },
+        "pan": {
+          "feature": "progress",
+          "min": -0.7,
+          "max": 0.7,
+          "drivenBy": "Which record",
+          "explain": "The Northern Hemisphere is in your left ear and the Southern Hemisphere is in your right ear. Headphones are recommended.",
+          "bounds": "75% left and 75% right"
+        },
+        "texture": {
+          "feature": "change",
+          "max": 0,
+          "drivenBy": "Change from the previous year",
+          "explain": "Not used for this item.",
+          "bounds": "Silent"
+        }
+      },
+      "source": {
+        "name": "GISS Surface Temperature Analysis (GISTEMP v4), NASA Goddard Institute for Space Studies",
+        "url": "https://data.giss.nasa.gov/gistemp/",
+        "attribution": "GISTEMP Team, 2026: GISS Surface Temperature Analysis (GISTEMP), version 4. NASA Goddard Institute for Space Studies.",
+        "license": "NASA data, free to reuse with credit. See the GISTEMP page for citation guidance.",
+        "accessed": "2026-11-15",
+        "related": "Shown as a map animation in NASA SVS visualization 5603, https://svs.gsfc.nasa.gov/5603/"
+      },
+      "limitations": [
+        "Each record is measured against its own 1951–1980 average, so this compares how much each has changed, not which half is hotter.",
+        "Use headphones or well-separated speakers. On a single speaker the two records blend together."
+      ],
+      "timeRange": "1880 to 2025, one value per year",
+      "group": "measurements",
+      "about": [
+        {
+          "heading": "How it is measured",
+          "text": "Both records come from the same NASA analysis of weather-station and sea-surface temperatures, split at the equator. Each is compared with its own 1951–1980 average."
+        },
+        {
+          "heading": "Why it matters",
+          "text": "Most people live in the Northern Hemisphere, which is warming faster. The Southern Hemisphere is mostly ocean, which takes up heat more slowly."
+        }
+      ]
     },
     {
       "id": "co2-mauna-loa",
@@ -341,7 +726,387 @@
         "Notes are snapped to a musical scale, so two neighbouring years can share a note even though the value rose. Switch the pitch curve to Linear or Logarithmic to hear every rise."
       ],
       "timeRange": "1959 to 2025, one value per year",
-      "group": "measurements"
+      "group": "measurements",
+      "about": [
+        {
+          "heading": "How it is measured",
+          "text": "Air is sampled continuously at Mauna Loa Observatory, high on a volcano in Hawaii and far from cities and forests. Measurements began there in 1958, making this the longest continuous record of carbon dioxide in the air."
+        },
+        {
+          "heading": "Why it matters",
+          "text": "Carbon dioxide traps heat. Its rise is the main cause of the warming heard in the temperature items."
+        }
+      ]
+    },
+    {
+      "id": "co2-monthly",
+      "kind": "data",
+      "derivedFrom": "scientific-data",
+      "title": "The planet breathing: carbon dioxide month by month, 1958–2026 (from NOAA data)",
+      "description": "Every month from March 1958 to September 2026, from the carbon dioxide record at Mauna Loa Observatory in Hawaii. A continuous tone follows the monthly value. Two plucked notes mark each year: one in May, when carbon dioxide peaks, and one in September, when it is near its yearly low.",
+      "summary": "You hear a wobble riding on a climb. Each year carbon dioxide rises to a peak in May, then falls by about 6 parts per million to a low in September or October, as plants across the Northern Hemisphere grow through the summer and take carbon dioxide out of the air. Through autumn and winter it rises again. The wobble has stayed about the same size, but each year's low is higher than the last. The monthly value first reached 400 parts per million in May 2013, and no month has been below 400 since November 2015.",
+      "keyMoments": [
+        {
+          "at": "1958-03",
+          "text": "March 1958: the record begins at about 315.7 parts per million."
+        },
+        {
+          "at": "1958-10",
+          "text": "October 1958: the lowest month in the whole record, about 312.4 parts per million."
+        },
+        {
+          "at": "1986-05",
+          "text": "May 1986: a month reaches 350 parts per million for the first time."
+        },
+        {
+          "at": "2013-05",
+          "text": "May 2013: a month reaches 400 parts per million for the first time."
+        },
+        {
+          "at": "2015-10",
+          "text": "October 2015: the last month below 400 parts per million."
+        },
+        {
+          "at": "2022-04",
+          "text": "April 2022: a month reaches 420 parts per million for the first time."
+        },
+        {
+          "at": "2026-05",
+          "text": "May 2026: the highest month in the record, about 432.3 parts per million."
+        }
+      ],
+      "data": {
+        "file": "data/co2_monthly.json",
+        "unit": "ppm",
+        "valueLabel": "Carbon dioxide",
+        "stepLabel": "Month",
+        "signed": false,
+        "decimals": 1
+      },
+      "timing": {
+        "stepSeconds": 0.07,
+        "pluckOn": [
+          "-05",
+          "-09"
+        ]
+      },
+      "visual": {
+        "type": "stripes",
+        "center": "mid",
+        "caption": "A chart with one stripe per year. Stripes run from blue for the lowest values in the record to red for the highest; the line and the label show the same values, so nothing depends on color alone."
+      },
+      "mapping": {
+        "waveform": "triangle",
+        "pitch": {
+          "feature": "value",
+          "curve": "log",
+          "fMin": 220,
+          "fMax": 880,
+          "scale": "pentatonicMinor",
+          "root": 57,
+          "drivenBy": "Carbon dioxide for the month",
+          "explain": "More carbon dioxide, higher pitch. The tone slides smoothly, so you hear it rise and fall within each year.",
+          "bounds": "220–880 Hz (A3 to A5), not snapped to a scale"
+        },
+        "loudness": {
+          "feature": "trend",
+          "min": 0.45,
+          "max": 0.9,
+          "drivenBy": "Nine-year average carbon dioxide",
+          "explain": "As the long-term level rises, the sound gets gently louder.",
+          "bounds": "Always between half and full level, under a fixed ceiling"
+        },
+        "timbre": {
+          "feature": "value",
+          "min": 0.15,
+          "max": 0.9,
+          "drivenBy": "Carbon dioxide for the month",
+          "explain": "Higher values sound brighter.",
+          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
+        },
+        "pan": {
+          "feature": "progress",
+          "min": -0.7,
+          "max": 0.7,
+          "drivenBy": "Position in time",
+          "explain": "The sound travels from your left ear (1958) to your right ear (2026).",
+          "bounds": "70% left to 70% right"
+        },
+        "texture": {
+          "feature": "change",
+          "max": 0,
+          "drivenBy": "Change from the previous year",
+          "explain": "Not used for this item.",
+          "bounds": "Silent"
+        },
+        "density": {
+          "drivenBy": "The calendar",
+          "explain": "Two plucked notes a year: May (the yearly peak) and September (near the yearly low).",
+          "bounds": "Fixed rhythm"
+        }
+      },
+      "source": {
+        "name": "Trends in Atmospheric Carbon Dioxide, Mauna Loa Observatory, NOAA Global Monitoring Laboratory",
+        "url": "https://gml.noaa.gov/ccgg/trends/",
+        "attribution": "NOAA Global Monitoring Laboratory and Scripps Institution of Oceanography.",
+        "license": "NOAA data, freely available with credit to NOAA GML.",
+        "accessed": "2026-11-15",
+        "related": "This record is from NOAA, not NASA. NASA shows the same measurements on its climate pages."
+      },
+      "limitations": [
+        "This is one mountain-top station. It tracks the global trend closely, and the size of the seasonal wobble is specific to its latitude.",
+        "From December 2022 to early July 2023, after an eruption of Mauna Loa, the measurements came from the nearby Maunakea Observatories.",
+        "A few missing months were filled in by NOAA.",
+        "The pitch is not snapped to a scale here, so that the small yearly wobble can be heard. Switching the pitch curve to Musical scale hides most of it."
+      ],
+      "timeRange": "March 1958 to September 2026, one value per month",
+      "group": "measurements",
+      "about": [
+        {
+          "heading": "How it is measured",
+          "text": "Air is sampled continuously at Mauna Loa Observatory, high on a volcano in Hawaii and far from cities and forests. Measurements began there in 1958."
+        },
+        {
+          "heading": "Why it matters",
+          "text": "The yearly wobble is the living world at work: most of Earth's land plants are in the Northern Hemisphere, and their summer growth draws carbon dioxide down. The climb underneath it is the part that people have added."
+        }
+      ]
+    },
+    {
+      "id": "methane-global",
+      "kind": "data",
+      "derivedFrom": "scientific-data",
+      "title": "Methane in the air, 1984–2025 (from NOAA data)",
+      "description": "Each year from 1984 to 2025 becomes one note, taken from the worldwide yearly average of methane in the air, in parts per billion.",
+      "summary": "This one has a plot twist. The notes climb quickly through the 1980s, slow down in the 1990s, and then almost stop: from 1999 to 2006 methane hardly changed, and in three of those years it fell slightly. In 2007 the climb starts again. It reaches its fastest pace in 2021 and 2022, about 16 parts per billion a year, and has slowed a little since. Methane rose from about 1,645 parts per billion in 1984 to about 1,936 in 2025.",
+      "keyMoments": [
+        {
+          "at": 1984,
+          "text": "1984: the record begins at about 1,645 parts per billion. This is the lowest note."
+        },
+        {
+          "at": 1999,
+          "text": "1999: the rise stalls. For the next seven years methane hardly changes."
+        },
+        {
+          "at": 2005,
+          "text": "2005: the largest one-year fall in the record, about 2.9 parts per billion."
+        },
+        {
+          "at": 2007,
+          "text": "2007: the rise starts again, about 6.4 parts per billion in one year."
+        },
+        {
+          "at": 2011,
+          "text": "2011: methane passes 1,800 parts per billion."
+        },
+        {
+          "at": 2022,
+          "text": "2022: the largest one-year rise, about 16.1 parts per billion, and methane passes 1,900."
+        },
+        {
+          "at": 2025,
+          "text": "2025: about 1,936 parts per billion, the highest in the record. This is the highest note."
+        }
+      ],
+      "data": {
+        "file": "data/ch4_annual.json",
+        "unit": "ppb",
+        "valueLabel": "Methane",
+        "stepLabel": "Year",
+        "signed": false,
+        "decimals": 1
+      },
+      "timing": {
+        "stepSeconds": 0.5
+      },
+      "visual": {
+        "type": "stripes",
+        "center": "mid",
+        "caption": "A chart with one stripe per year. Stripes run from blue for the lowest values in the record to red for the highest; the line and the label show the same values, so nothing depends on color alone."
+      },
+      "mapping": {
+        "waveform": "triangle",
+        "pitch": {
+          "feature": "value",
+          "curve": "quantized",
+          "fMin": 220,
+          "fMax": 880,
+          "scale": "pentatonicMinor",
+          "root": 57,
+          "drivenBy": "Methane for the year",
+          "explain": "More methane, higher note.",
+          "bounds": "220–880 Hz (A3 to A5), snapped to a five-note scale"
+        },
+        "loudness": {
+          "feature": "trend",
+          "min": 0.45,
+          "max": 0.9,
+          "drivenBy": "Nine-year average methane",
+          "explain": "As the long-term level rises, the sound gets gently louder.",
+          "bounds": "Always between half and full level, under a fixed ceiling"
+        },
+        "timbre": {
+          "feature": "change",
+          "min": 0.15,
+          "max": 0.9,
+          "drivenBy": "Size of the change since the previous year",
+          "explain": "A bigger one-year change sounds brighter and sharper. Years with almost no change sound mellow.",
+          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
+        },
+        "pan": {
+          "feature": "progress",
+          "min": -0.7,
+          "max": 0.7,
+          "drivenBy": "Position in time",
+          "explain": "The sound travels from your left ear (1984) to your right ear (2025).",
+          "bounds": "70% left to 70% right"
+        },
+        "texture": {
+          "feature": "change",
+          "max": 0,
+          "drivenBy": "Change from the previous year",
+          "explain": "Not used for this item.",
+          "bounds": "Silent"
+        }
+      },
+      "source": {
+        "name": "Trends in Atmospheric Methane, NOAA Global Monitoring Laboratory",
+        "url": "https://gml.noaa.gov/ccgg/trends_ch4/",
+        "attribution": "NOAA Global Monitoring Laboratory.",
+        "license": "NOAA data, freely available with credit to NOAA GML.",
+        "accessed": "2026-11-15",
+        "related": "This record is from NOAA, not NASA."
+      },
+      "limitations": [
+        "These are yearly averages, so the seasonal cycle is not heard.",
+        "The most recent year is preliminary and may be revised slightly by NOAA.",
+        "Notes are snapped to a musical scale, so the flat stretch from 1999 to 2006 is heard as a repeated note. Switch the pitch curve to Linear or Logarithmic to hear the small changes within it."
+      ],
+      "timeRange": "1984 to 2025, one value per year",
+      "group": "measurements",
+      "about": [
+        {
+          "heading": "How it is measured",
+          "text": "Air samples are collected at a worldwide network of remote sites at sea level and averaged into one global figure."
+        },
+        {
+          "heading": "Why it matters",
+          "text": "Methane is the second most important greenhouse gas from human activity. Each molecule traps far more heat than carbon dioxide, but it lasts only about a decade in the air."
+        }
+      ]
+    },
+    {
+      "id": "ocean-heat",
+      "kind": "data",
+      "derivedFrom": "scientific-data",
+      "title": "Heat stored in the ocean, 2005–2025 (from NOAA data)",
+      "description": "Each year from 2005 to 2025 becomes one note, taken from NOAA's estimate of the heat stored in the top 2,000 metres of the world's oceans. Values are in units of ten billion trillion joules, compared with NOAA's long-term reference level.",
+      "summary": "A short record with a simple shape: up. The notes rise in 18 of the 20 steps and dip only in 2007 and 2016. By 2025 the ocean holds about 22 more units of heat than it did in 2005, taking the figure from about 10 to about 33, roughly three times as far above the reference level.",
+      "keyMoments": [
+        {
+          "at": 2005,
+          "text": "2005: the record begins at about 10.2 units. This is the lowest note."
+        },
+        {
+          "at": 2016,
+          "text": "2016: the larger of the two dips, a fall of about 1.6 units."
+        },
+        {
+          "at": 2017,
+          "text": "2017: the largest one-year rise, about 2.8 units."
+        },
+        {
+          "at": 2025,
+          "text": "2025: about 32.5 units, the highest in the record. This is the highest note."
+        }
+      ],
+      "data": {
+        "file": "data/ocean_heat_content.json",
+        "unit": "× 10²² J",
+        "valueLabel": "Ocean heat content",
+        "stepLabel": "Year",
+        "signed": false,
+        "decimals": 1
+      },
+      "timing": {
+        "stepSeconds": 0.7
+      },
+      "visual": {
+        "type": "stripes",
+        "center": "mid",
+        "caption": "A chart with one stripe per year. Stripes run from blue for the lowest values in the record to red for the highest; the line and the label show the same values, so nothing depends on color alone."
+      },
+      "mapping": {
+        "waveform": "triangle",
+        "pitch": {
+          "feature": "value",
+          "curve": "quantized",
+          "fMin": 220,
+          "fMax": 880,
+          "scale": "pentatonicMinor",
+          "root": 57,
+          "drivenBy": "Ocean heat content for the year",
+          "explain": "More heat stored, higher note.",
+          "bounds": "220–880 Hz (A3 to A5), snapped to a five-note scale"
+        },
+        "loudness": {
+          "feature": "trend",
+          "min": 0.45,
+          "max": 0.9,
+          "drivenBy": "Nine-year average heat content",
+          "explain": "As the long-term level rises, the sound gets gently louder.",
+          "bounds": "Always between half and full level, under a fixed ceiling"
+        },
+        "timbre": {
+          "feature": "change",
+          "min": 0.15,
+          "max": 0.9,
+          "drivenBy": "Size of the change since the previous year",
+          "explain": "A bigger one-year change sounds brighter and sharper.",
+          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
+        },
+        "pan": {
+          "feature": "progress",
+          "min": -0.7,
+          "max": 0.7,
+          "drivenBy": "Position in time",
+          "explain": "The sound travels from your left ear (2005) to your right ear (2025).",
+          "bounds": "70% left to 70% right"
+        },
+        "texture": {
+          "feature": "change",
+          "max": 0,
+          "drivenBy": "Change from the previous year",
+          "explain": "Not used for this item.",
+          "bounds": "Silent"
+        }
+      },
+      "source": {
+        "name": "Global Ocean Heat and Salt Content, NOAA National Centers for Environmental Information",
+        "url": "https://www.ncei.noaa.gov/access/global-ocean-heat-content/",
+        "attribution": "NOAA National Centers for Environmental Information (NCEI).",
+        "license": "NOAA data, freely available with credit to NOAA NCEI.",
+        "accessed": "2026-11-15",
+        "related": "This record is from NOAA, not NASA."
+      },
+      "limitations": [
+        "This is a short record of 21 years.",
+        "The numbers are differences from NOAA's reference level, not the total heat in the ocean, so the 'three times' in the summary describes the difference and not the ocean itself.",
+        "Notes are snapped to a musical scale. Switch the pitch curve to Linear or Logarithmic to hear every change."
+      ],
+      "timeRange": "2005 to 2025, one value per year",
+      "group": "measurements",
+      "about": [
+        {
+          "heading": "How it is measured",
+          "text": "Thousands of drifting robotic floats, called Argo floats, dive to 2,000 metres and measure temperature on the way back up. They have covered the world's oceans since the mid-2000s, which is why this record starts in 2005."
+        },
+        {
+          "heading": "Why it matters",
+          "text": "The ocean takes up about nine-tenths of the extra heat trapped by greenhouse gases. That heat raises sea level, because warm water expands, and it feeds marine heatwaves."
+        }
+      ]
     },
     {
       "id": "arctic-sea-ice",
@@ -456,7 +1221,378 @@
         "Notes are snapped to a musical scale. Switch the pitch curve to Linear or Logarithmic to hear the unsnapped values."
       ],
       "timeRange": "1979 to 2026, one value per year",
-      "group": "measurements"
+      "group": "measurements",
+      "about": [
+        {
+          "heading": "How it is measured",
+          "text": "Satellites carrying microwave sensors have mapped sea ice continuously since late 1978. They work through cloud and through the polar night. Extent is the area of ocean with at least 15% ice cover."
+        },
+        {
+          "heading": "Why it matters",
+          "text": "Bright ice reflects sunlight and dark open water absorbs it, so less summer ice means the Arctic Ocean takes up more heat."
+        }
+      ]
+    },
+    {
+      "id": "compare-arctic-ice-seasons",
+      "kind": "data",
+      "derivedFrom": "scientific-data",
+      "title": "Compare: Arctic sea ice in winter and in summer, 1979–2026 (from satellite data)",
+      "description": "Two records play at once on the same pitch scale: Arctic sea ice in March, when it reaches its winter peak, in your left ear, and in September, at its summer low, in your right ear. More ice is a higher note.",
+      "summary": "The left ear stays high and the right ear stays low, because there is always far more ice in winter. Listen to how each one moves. The winter notes drift down gently: March ice averaged about 15.9 million square kilometres in the first ten years and about 14.5 million in the last ten, a loss of about a tenth. The summer notes fall much further: from about 7.2 million to about 4.6 million, a loss of more than a third. The ice still grows back each winter, but less of it survives each summer.",
+      "keyMoments": [
+        {
+          "at": 1979,
+          "text": "1979: the record begins with the most March ice in the record, about 16.34 million square kilometres, and 7.05 million in September."
+        },
+        {
+          "at": 2007,
+          "text": "2007: September ice drops sharply to about 4.27 million square kilometres."
+        },
+        {
+          "at": 2012,
+          "text": "2012: the least September ice in the record, about 3.57 million square kilometres."
+        },
+        {
+          "at": 2025,
+          "text": "2025: the least March ice in the record, about 14.12 million square kilometres."
+        }
+      ],
+      "data": {
+        "file": "data/compare_arctic_ice_seasons.json",
+        "unit": "million km²",
+        "valueLabel": "Sea ice extent",
+        "stepLabel": "Year",
+        "signed": false,
+        "decimals": 2,
+        "names": [
+          "March",
+          "September"
+        ]
+      },
+      "timing": {
+        "stepSeconds": 0.5
+      },
+      "visual": {
+        "type": "stripes",
+        "center": "mid",
+        "invertColors": true,
+        "caption": "A chart with one stripe per year, colored by the March value. The solid line is March and the dashed line is September; the label shows both values."
+      },
+      "mapping": {
+        "waveform": "triangle",
+        "pitch": {
+          "feature": "value",
+          "curve": "quantized",
+          "fMin": 220,
+          "fMax": 880,
+          "scale": "pentatonicMinor",
+          "root": 57,
+          "drivenBy": "Sea ice extent, both seasons on one shared scale",
+          "explain": "More ice, higher note. The same note means the same amount of ice in both ears.",
+          "bounds": "220–880 Hz (A3 to A5), snapped to a five-note scale"
+        },
+        "loudness": {
+          "feature": "progress",
+          "min": 0.7,
+          "max": 0.7,
+          "drivenBy": "Nothing: held steady",
+          "explain": "Both records play at the same steady level, so neither drowns out the other.",
+          "bounds": "Fixed level, under a fixed ceiling"
+        },
+        "timbre": {
+          "feature": "value",
+          "min": 0.15,
+          "max": 0.9,
+          "drivenBy": "Sea ice extent",
+          "explain": "More ice sounds brighter. The right-ear record also has a slightly buzzier tone so the two are easy to tell apart.",
+          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
+        },
+        "pan": {
+          "feature": "progress",
+          "min": -0.7,
+          "max": 0.7,
+          "drivenBy": "Which record",
+          "explain": "March is in your left ear and September is in your right ear. Headphones are recommended.",
+          "bounds": "75% left and 75% right"
+        },
+        "texture": {
+          "feature": "change",
+          "max": 0,
+          "drivenBy": "Change from the previous year",
+          "explain": "Not used for this item.",
+          "bounds": "Silent"
+        }
+      },
+      "source": {
+        "name": "Sea Ice Index (dataset G02135), National Snow and Ice Data Center",
+        "url": "https://nsidc.org/data/g02135",
+        "attribution": "National Snow and Ice Data Center (NSIDC), Boulder, Colorado USA.",
+        "license": "Freely available with credit to NSIDC. See the dataset page for the full citation.",
+        "accessed": "2026-11-15",
+        "related": "This record is from NSIDC, a data center supported by NASA and NOAA. It is built from satellite microwave measurements."
+      },
+      "limitations": [
+        "Extent says nothing about thickness, and the winter ice is thinner than it used to be even where its area has changed little.",
+        "Use headphones or well-separated speakers. On a single speaker the two records blend together."
+      ],
+      "timeRange": "1979 to 2026, one value per year for each season",
+      "group": "measurements",
+      "about": [
+        {
+          "heading": "How it is measured",
+          "text": "Satellites carrying microwave sensors have mapped sea ice continuously since late 1978. Extent is the area of ocean with at least 15% ice cover."
+        },
+        {
+          "heading": "Why it matters",
+          "text": "Ice that survives the summer becomes thicker, older ice. As less survives, more of the Arctic's ice is thin first-year ice that melts easily the next summer."
+        }
+      ]
+    },
+    {
+      "id": "antarctic-sea-ice",
+      "kind": "data",
+      "derivedFrom": "scientific-data",
+      "title": "Antarctic sea ice in February, 1979–2026 (from satellite data)",
+      "description": "Each year from 1979 to 2026 becomes one note, taken from the satellite record of sea ice around Antarctica in February, the end of the southern summer, when the ice is at its smallest. Values are in millions of square kilometres.",
+      "summary": "Listen to this after the Arctic item, because it behaves differently. For more than thirty-five years the notes bounce up and down with no downward drift, and some of the highest notes come late: 2008 is the highest, and 2013 to 2015 are almost as high. Then the floor drops. February ice falls sharply in 2016 and 2017, and 2022 and 2023 set new record lows. February ice averaged about 3.1 million square kilometres from 1979 to 2015 and about 2.5 million from 2017 to 2026. The last note, 2026, is back up near 2.9 million.",
+      "keyMoments": [
+        {
+          "at": 1979,
+          "text": "1979: the record begins at about 3.14 million square kilometres."
+        },
+        {
+          "at": 2008,
+          "text": "2008: the most February ice in the record, about 3.89 million square kilometres. This is the highest note."
+        },
+        {
+          "at": 2015,
+          "text": "2015: the last of three high years in a row, about 3.80 million square kilometres."
+        },
+        {
+          "at": 2017,
+          "text": "2017: a sharp drop to about 2.29 million square kilometres, a record low at the time."
+        },
+        {
+          "at": 2023,
+          "text": "2023: the least February ice in the record, about 1.98 million square kilometres. This is the lowest note."
+        },
+        {
+          "at": 2026,
+          "text": "2026: a partial recovery to about 2.91 million square kilometres."
+        }
+      ],
+      "data": {
+        "file": "data/antarctic_sea_ice_february.json",
+        "unit": "million km²",
+        "valueLabel": "Sea ice extent",
+        "stepLabel": "Year",
+        "signed": false,
+        "decimals": 2
+      },
+      "timing": {
+        "stepSeconds": 0.5
+      },
+      "visual": {
+        "type": "stripes",
+        "center": "mid",
+        "invertColors": true,
+        "caption": "A chart with one stripe per year. Blue stripes are years with more ice and red stripes are years with less; the line and the label show the same values, so nothing depends on color alone."
+      },
+      "mapping": {
+        "waveform": "triangle",
+        "pitch": {
+          "feature": "value",
+          "curve": "quantized",
+          "fMin": 220,
+          "fMax": 880,
+          "scale": "pentatonicMinor",
+          "root": 57,
+          "drivenBy": "February sea ice extent for the year",
+          "explain": "More ice, higher note. Less ice, lower note.",
+          "bounds": "220–880 Hz (A3 to A5), snapped to a five-note scale"
+        },
+        "loudness": {
+          "feature": "progress",
+          "min": 0.7,
+          "max": 0.7,
+          "drivenBy": "Nothing: held steady",
+          "explain": "Loudness stays the same throughout, so quiet is never mistaken for less ice.",
+          "bounds": "Fixed level, under a fixed ceiling"
+        },
+        "timbre": {
+          "feature": "value",
+          "min": 0.15,
+          "max": 0.9,
+          "drivenBy": "February sea ice extent for the year",
+          "explain": "Years with more ice sound brighter. Years with less ice sound duller and more muffled.",
+          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
+        },
+        "pan": {
+          "feature": "progress",
+          "min": -0.7,
+          "max": 0.7,
+          "drivenBy": "Position in time",
+          "explain": "The sound travels from your left ear (1979) to your right ear (2026).",
+          "bounds": "70% left to 70% right"
+        },
+        "texture": {
+          "feature": "change",
+          "max": 0.8,
+          "drivenBy": "Change from the previous year",
+          "explain": "A soft, low rush of air appears only when one year is very different from the year before.",
+          "bounds": "Very quiet, and silent for small changes"
+        }
+      },
+      "source": {
+        "name": "Sea Ice Index (dataset G02135), National Snow and Ice Data Center",
+        "url": "https://nsidc.org/data/g02135",
+        "attribution": "National Snow and Ice Data Center (NSIDC), Boulder, Colorado USA.",
+        "license": "Freely available with credit to NSIDC. See the dataset page for the full citation.",
+        "accessed": "2026-11-15",
+        "related": "This record is from NSIDC, a data center supported by NASA and NOAA. It is built from satellite microwave measurements."
+      },
+      "limitations": [
+        "Extent counts ocean area with at least 15% ice cover. It says nothing about how thick the ice is.",
+        "Only February is included, so the yearly freeze and melt cycle is not heard.",
+        "The pitch range is fitted to this record. The same note here and in the Arctic item does not mean the same amount of ice.",
+        "Notes are snapped to a musical scale. Switch the pitch curve to Linear or Logarithmic to hear the unsnapped values."
+      ],
+      "timeRange": "1979 to 2026, one value per year",
+      "group": "measurements",
+      "about": [
+        {
+          "heading": "How it is measured",
+          "text": "Satellites carrying microwave sensors have mapped sea ice continuously since late 1978. They work through cloud and through the polar night. Extent is the area of ocean with at least 15% ice cover."
+        },
+        {
+          "heading": "Why it matters",
+          "text": "Unlike the Arctic, Antarctic sea ice showed no long-term decline for most of the satellite record. Scientists are still working out what caused the sudden drop after 2015 and whether it will last."
+        }
+      ]
+    },
+    {
+      "id": "ozone-hole",
+      "kind": "data",
+      "derivedFrom": "scientific-data",
+      "title": "The Antarctic ozone hole, 1979–2025 (from NASA data)",
+      "description": "Each year from 1979 to 2025 becomes one note, taken from NASA's record of the size of the ozone hole over Antarctica. The value is the hole's average area between 7 September and 13 October, when it is at its largest, in millions of square kilometres.",
+      "summary": "This is the one record here with a turn in it. The hole barely exists in 1979, then grows through the 1980s, year after year, to more than 20 million square kilometres by 1992. It stays large, with the largest in 2006. Since then the notes have stopped climbing and begun, unevenly, to come down: the hole averaged about 23 million square kilometres from 1998 to 2008 and about 20 million from 2016 to 2025. Two years stand far below their neighbours, 2002 and 2019, when unusual weather high over Antarctica broke the hole up early.",
+      "keyMoments": [
+        {
+          "at": 1979,
+          "text": "1979: almost no hole, about 0.1 million square kilometres. This is the lowest note."
+        },
+        {
+          "at": 1987,
+          "text": "1987: the hole reaches about 19.3 million square kilometres. This is the year the world agreed the Montreal Protocol to phase out the chemicals that cause it."
+        },
+        {
+          "at": 1992,
+          "text": "1992: the hole passes 20 million square kilometres for the first time."
+        },
+        {
+          "at": 2002,
+          "text": "2002: a sudden small year, about 12.0 million square kilometres, caused by unusual weather high over Antarctica."
+        },
+        {
+          "at": 2006,
+          "text": "2006: the largest hole in the record, about 26.6 million square kilometres. This is the highest note."
+        },
+        {
+          "at": 2019,
+          "text": "2019: about 9.3 million square kilometres, the smallest since 1983, again because of unusual weather."
+        },
+        {
+          "at": 2025,
+          "text": "2025: about 18.7 million square kilometres."
+        }
+      ],
+      "data": {
+        "file": "data/ozone_hole_annual.json",
+        "unit": "million km²",
+        "valueLabel": "Ozone hole area",
+        "stepLabel": "Year",
+        "signed": false,
+        "decimals": 1
+      },
+      "timing": {
+        "stepSeconds": 0.5
+      },
+      "visual": {
+        "type": "stripes",
+        "center": "mid",
+        "caption": "A chart with one stripe per year. Blue stripes are years with a smaller hole and red stripes are years with a larger one; the line and the label show the same values, so nothing depends on color alone."
+      },
+      "mapping": {
+        "waveform": "triangle",
+        "pitch": {
+          "feature": "value",
+          "curve": "quantized",
+          "fMin": 220,
+          "fMax": 880,
+          "scale": "pentatonicMinor",
+          "root": 57,
+          "drivenBy": "Ozone hole area for the year",
+          "explain": "A bigger hole, higher note. A smaller hole, lower note.",
+          "bounds": "220–880 Hz (A3 to A5), snapped to a five-note scale"
+        },
+        "loudness": {
+          "feature": "progress",
+          "min": 0.7,
+          "max": 0.7,
+          "drivenBy": "Nothing: held steady",
+          "explain": "Loudness stays the same throughout.",
+          "bounds": "Fixed level, under a fixed ceiling"
+        },
+        "timbre": {
+          "feature": "value",
+          "min": 0.15,
+          "max": 0.9,
+          "drivenBy": "Ozone hole area for the year",
+          "explain": "Years with a bigger hole sound brighter and sharper.",
+          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
+        },
+        "pan": {
+          "feature": "progress",
+          "min": -0.7,
+          "max": 0.7,
+          "drivenBy": "Position in time",
+          "explain": "The sound travels from your left ear (1979) to your right ear (2025).",
+          "bounds": "70% left to 70% right"
+        },
+        "texture": {
+          "feature": "change",
+          "max": 0.8,
+          "drivenBy": "Change from the previous year",
+          "explain": "A soft, low rush of air appears only when one year is very different from the year before, as in 2002 and 2019.",
+          "bounds": "Very quiet, and silent for small changes"
+        }
+      },
+      "source": {
+        "name": "NASA Ozone Watch, NASA Goddard Space Flight Center",
+        "url": "https://ozonewatch.gsfc.nasa.gov/",
+        "attribution": "NASA Ozone Watch, NASA Goddard Space Flight Center. Satellite data from TOMS, OMI and OMPS.",
+        "license": "NASA data, free to reuse with credit.",
+        "accessed": "2026-11-15"
+      },
+      "limitations": [
+        "NASA's table has no value for 1995, so the sound steps straight from 1994 to 1996.",
+        "The size of the hole in any one year depends strongly on the weather high over Antarctica, so the recovery is slow and uneven. Single years such as 2002 and 2019 are not the trend.",
+        "Notes are snapped to a musical scale. Switch the pitch curve to Linear or Logarithmic to hear the unsnapped values."
+      ],
+      "timeRange": "1979 to 2025, one value per year (no value for 1995)",
+      "group": "measurements",
+      "about": [
+        {
+          "heading": "How it is measured",
+          "text": "NASA and NOAA satellites have measured ozone over Antarctica every year since 1979. The hole is the area where ozone falls below 220 Dobson units."
+        },
+        {
+          "heading": "Why it matters",
+          "text": "Ozone high in the atmosphere blocks ultraviolet light from the Sun. The hole was caused by chemicals once used in fridges and spray cans. Countries agreed to phase them out, and the ozone layer is slowly recovering: it is the clearest case of the world fixing a planet-wide environmental problem."
+        }
+      ]
     },
     {
       "id": "svs-5603-frames",

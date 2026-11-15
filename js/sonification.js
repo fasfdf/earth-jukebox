@@ -7,7 +7,7 @@
 // The same engine runs on a live AudioContext (real-time playback) and on an
 // OfflineAudioContext (WAV export), so what you export is what you heard.
 
-import { clamp, lerp, mapFrequency, featuresAt } from "./processing.js";
+import { clamp, lerp, mapFrequency, featuresAt, isDecadeStart } from "./processing.js";
 
 // Hard bounds. Nothing in a catalog mapping can push the sound above these.
 const LIMITS = { tone: 0.32, texture: 0.05, pluck: 0.3, ceiling: 0.9 };
@@ -42,7 +42,9 @@ export function computeSoundParams(features, mapping, { curve } = {}) {
 // ---------- Synthesis ----------
 
 export class SonificationEngine {
-  constructor(ctx, { volume = 0.7, waveform = "triangle" } = {}) {
+  // Pass `destination` (another engine's bus) to add a second voice that shares
+  // the first engine's volume control and limiter.
+  constructor(ctx, { volume = 0.7, waveform = "triangle", destination = null } = {}) {
     this.ctx = ctx;
     this.started = false;
 
@@ -58,9 +60,10 @@ export class SonificationEngine {
     this.limiter.release.value = 0.25;
     this.ceiling = ctx.createGain();
     this.ceiling.gain.value = LIMITS.ceiling;
-    this.bus.connect(this.volume).connect(this.limiter).connect(this.ceiling).connect(ctx.destination);
+    if (destination) this.bus.connect(destination);
+    else this.bus.connect(this.volume).connect(this.limiter).connect(this.ceiling).connect(ctx.destination);
     this.analyser = null;
-    if (ctx.createAnalyser) {
+    if (!destination && ctx.createAnalyser) {
       this.analyser = ctx.createAnalyser();
       this.analyser.fftSize = 1024;
       this.ceiling.connect(this.analyser);
@@ -150,6 +153,11 @@ export class SonificationEngine {
     osc.stop(when + decay + 0.05);
   }
 
+  // A short, low "tock" that marks the start of each decade, for orientation in time.
+  tick(when = this.ctx.currentTime) {
+    this.pluck({ freq: 110, amp: 0.75, pan: 0, decay: 0.14 }, when);
+  }
+
   // Fade everything out quickly and cancel anything already scheduled.
   silence(when = this.ctx.currentTime) {
     for (const param of [this.toneGain.gain, this.noiseGain.gain]) {
@@ -162,19 +170,40 @@ export class SonificationEngine {
 // ---------- Offline render and WAV export ----------
 
 // Renders a whole data track to an AudioBuffer with the same engine and mapping.
-export async function renderDataTrack(track, mapping, { stepSeconds = 0.25, curve, volume = 0.7, sampleRate = 44100 } = {}) {
+// Dense records (monthly) pluck only on chosen steps, e.g. timing.pluckOn = ["-05", "-09"]
+// plays a note each May and September while the continuous tone follows every month.
+export function shouldPluck(label, timing = {}) {
+  return !timing.pluckOn || timing.pluckOn.some((suffix) => String(label).endsWith(suffix));
+}
+
+export const COMPARE_PAN = 0.75; // comparisons: first series this far left, second this far right
+
+export async function renderDataTrack(track, mapping, { stepSeconds = 0.25, curve, volume = 0.7, sampleRate = 44100, decadeTicks = false, timing = {} } = {}) {
   const tail = 1.0;
   const duration = track.length * stepSeconds + tail;
   const ctx = new OfflineAudioContext(2, Math.ceil(duration * sampleRate), sampleRate);
   const engine = new SonificationEngine(ctx, { volume, waveform: mapping.waveform || "triangle" });
   engine.start(0);
+  const second = track.second
+    ? new SonificationEngine(ctx, { waveform: "sawtooth", destination: engine.bus })
+    : null;
+  second?.start(0);
   for (let i = 0; i < track.length; i++) {
     const when = i * stepSeconds;
     const params = computeSoundParams(featuresAt(track, i), mapping, { curve });
+    if (second) params.pan = -COMPARE_PAN;
     engine.update(params, when, 0.05);
-    engine.pluck({ freq: params.freq, amp: params.amp, pan: params.pan }, when);
+    if (shouldPluck(track.labels[i], timing)) engine.pluck({ freq: params.freq, amp: params.amp, pan: params.pan }, when);
+    if (second) {
+      const other = computeSoundParams(featuresAt(track.second, i), mapping, { curve });
+      other.pan = COMPARE_PAN;
+      second.update(other, when, 0.05);
+      second.pluck({ freq: other.freq, amp: other.amp, pan: other.pan }, when);
+    }
+    if (decadeTicks && isDecadeStart(track.labels[i])) engine.tick(when);
   }
   engine.silence(track.length * stepSeconds);
+  second?.silence(track.length * stepSeconds);
   return ctx.startRendering();
 }
 

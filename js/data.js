@@ -13,7 +13,16 @@ export async function loadDataTrack(item) {
   const response = await fetch(item.data.file);
   if (!response.ok) throw new Error(`Could not load ${item.data.file} (${response.status})`);
   const json = await response.json();
-  const track = buildDataTrack(json.labels, json.values);
+  let track;
+  if (json.values2) {
+    // Two series compared on one shared scale: `values` in the left ear, `values2` in the right.
+    const min = Math.min(...json.values, ...json.values2);
+    const max = Math.max(...json.values, ...json.values2);
+    track = buildDataTrack(json.labels, json.values, { min, max });
+    track.second = buildDataTrack(json.labels, json.values2, { min, max });
+  } else {
+    track = buildDataTrack(json.labels, json.values);
+  }
   track.meta = json.meta || {};
   return track;
 }

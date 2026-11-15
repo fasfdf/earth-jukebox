@@ -3,18 +3,19 @@
 
 import { loadCatalog, loadDataTrack, resolveVideoSource, itemFromFiles } from "./data.js";
 import {
-  clamp, featuresAt, noteName, freqToMidi, Smoother, COLOR_TARGETS,
+  clamp, normalize, featuresAt, noteName, formatLabel, isDecadeStart, freqToMidi, Smoother, COLOR_TARGETS,
   extractFrameFeatures, normalizeFrameFeatures,
   wavelengthToFrequency, lightToAudible, wavelengthToRgb,
 } from "./processing.js";
-import { SonificationEngine, computeSoundParams, renderDataTrack, encodeWav } from "./sonification.js";
+import { SonificationEngine, computeSoundParams, renderDataTrack, encodeWav, COMPARE_PAN, shouldPluck } from "./sonification.js";
 import { drawDataStage, drawFrameStage, drawScope, formatValue } from "./visualizer.js";
 
 const $ = (id) => document.getElementById(id);
 const el = {
   select: $("itemSelect"), file: $("fileInput"), stage: $("stage"), canvas: $("stageCanvas"),
   video: $("stageVideo"), note: $("stageNote"), caption: $("stageCaption"), scope: $("scope"),
-  play: $("playBtn"), restart: $("restartBtn"), timeline: $("timeline"), time: $("timeReadout"),
+  play: $("playBtn"), restart: $("restartBtn"), prev: $("prevBtn"), next: $("nextBtn"),
+  legend: $("legendBtn"), guided: $("guided"), speak: $("speak"), decades: $("decades"), decadesLabel: $("decadesLabel"), about: $("aboutBlock"), timeline: $("timeline"), time: $("timeReadout"),
   volume: $("volume"), mute: $("muteBtn"), timeRange: $("itemTimeRange"), speed: $("speed"), curve: $("curve"), colorField: $("colorTargetField"),
   color: $("colorTarget"), reduced: $("reducedMotion"), announce: $("announce"), exportBtn: $("exportBtn"),
   status: $("status"), live: $("liveRegion"), title: $("itemTitle"), badge: $("derivedBadge"),
@@ -72,6 +73,9 @@ function ensureAudio() {
       waveform: state.item?.mapping.waveform || "triangle",
     });
     state.engine.start();
+    // Second voice for comparisons; it plays through the first engine's volume and limiter.
+    state.engine2 = new SonificationEngine(state.ctx, { waveform: "sawtooth", destination: state.engine.bus });
+    state.engine2.start();
   }
   return state.ctx.state === "suspended" ? state.ctx.resume() : Promise.resolve();
 }
@@ -108,6 +112,36 @@ function syncCompanion(force = false) {
   el.video.playbackRate = clamp((c.secondsPerStep / stepSeconds()) * speed(), 0.25, 4);
 }
 
+// ---------- Guided tour ----------
+// At each key moment the sound stops, the description is shown (and optionally
+// spoken), and playback then carries on by itself.
+function cancelGuide() {
+  clearTimeout(state.guideTimer);
+  state.guiding = false;
+  if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+}
+
+function guidePause(text) {
+  pause("");
+  state.guiding = true;
+  setStatus(text);
+  const resume = () => {
+    if (!state.guiding) return;
+    cancelGuide();
+    play();
+  };
+  if (el.speak.checked && "speechSynthesis" in window) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.onend = resume;
+    utterance.onerror = resume;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+    state.guideTimer = setTimeout(resume, 25000); // safety net if the browser never reports the end
+  } else {
+    state.guideTimer = setTimeout(resume, Math.max(3500, text.length * 75));
+  }
+}
+
 // ---------- Transport ----------
 
 async function play() {
@@ -138,6 +172,7 @@ async function play() {
 function pause(message = "Paused.") {
   if (state.item?.kind === "video" || companion()) el.video.pause();
   state.engine?.silence();
+  state.engine2?.silence();
   if (state.playing) setStatus(message);
   state.playing = false;
   el.play.textContent = "Play";
@@ -152,12 +187,16 @@ function seek(seconds) {
   state.prevLum = null;
   state.lastSample = 0;
   state.dirty = true;
-  if (state.playing) state.engine.silence(); // release anything sounding; the next tick resumes
+  if (state.playing) {
+    state.engine.silence(); // release anything sounding; the next tick resumes
+    state.engine2.silence();
+  }
 }
 
 // ---------- Selecting an item ----------
 
 async function selectItem(item) {
+  cancelGuide();
   pause("");
   state.loading = true;
   state.item = item;
@@ -168,6 +207,8 @@ async function selectItem(item) {
   state.features = null;
   state.prevLum = null;
   state.params = null;
+  state.params2 = null;
+  state.scrubIdx = -1;
   state.smoothers = {};
   state.analysable = true;
   state.hasCompanion = false;
@@ -211,6 +252,14 @@ async function selectItem(item) {
   renderInfo(item);
   el.timeline.max = String(Math.max(0.01, state.duration));
   el.timeline.value = "0";
+  const isData = item.kind === "data" && !!state.track;
+  el.prev.hidden = el.next.hidden = el.decadesLabel.hidden = !isData;
+  el.timeline.step = isData ? String(stepSeconds()) : "0.01";
+  const unit = (item.data?.stepLabel || "year").toLowerCase();
+  el.prev.textContent = `Previous ${unit}`;
+  el.next.textContent = `Next ${unit}`;
+  // Each item starts on its own recommended pitch curve; the listener can still change it.
+  el.curve.value = item.mapping.pitch.curve || "quantized";
   el.exportBtn.disabled = item.kind !== "data";
   el.exportBtn.title = item.kind === "data" ? "" : "Audio download is available for items that are driven by data.";
   el.colorField.hidden = item.derivedFrom !== "image-features";
@@ -327,9 +376,18 @@ function renderInfo(item) {
       const li = document.createElement("li");
       const button = addText(li, "button", moment.text);
       button.type = "button";
-      button.addEventListener("click", () => seek(index * stepSeconds()));
+      button.addEventListener("click", () => {
+        cancelGuide();
+        seek(index * stepSeconds());
+      });
       el.moments.appendChild(li);
     }
+  }
+
+  el.about.replaceChildren();
+  for (const part of item.about || []) {
+    addText(el.about, "h3", part.heading);
+    addText(el.about, "p", part.text);
   }
 
   el.limitations.replaceChildren();
@@ -353,6 +411,12 @@ function renderInfo(item) {
   if (s.license) addText(el.source, "p", `Reuse: ${s.license}`);
   if (s.accessed) addText(el.source, "p", `Accessed: ${s.accessed}`);
   if (s.related) addText(el.source, "p", s.related);
+  if (item.data?.file) {
+    const p = addText(el.source, "p", "Values used by this page: ");
+    const a = addText(p, "a", item.data.file.split("/").pop());
+    a.href = item.data.file;
+    a.download = "";
+  }
 }
 
 function onDataStep(index) {
@@ -361,8 +425,10 @@ function onDataStep(index) {
   if (moment) {
     el.momentNow.textContent = moment.text;
     el.momentNow.hidden = false;
-    if (state.playing && el.announce.checked) el.live.textContent = moment.text;
+    if (state.playing && el.guided.checked) guidePause(moment.text);
+    else if (state.playing && el.announce.checked) el.live.textContent = moment.text;
   }
+  return moment ? moment.text : "";
 }
 
 // ---------- The tick: one clock drives picture and sound ----------
@@ -385,17 +451,49 @@ function advanceClock() {
   syncCompanion();
 }
 
+// Sound parameters for one series at a (possibly fractional) step position.
+function soundFor(track, x, pan) {
+  const params = computeSoundParams(featuresAt(track, x), state.item.mapping, { curve: el.curve.value });
+  if (pan !== undefined) params.pan = pan;
+  return params;
+}
+
+// The plucked note (or pair of notes) for one step, plus the decade tick.
+function playStepNotes(index) {
+  const { track } = state;
+  const dual = !!track.second;
+  const a = soundFor(track, index, dual ? -COMPARE_PAN : undefined);
+  state.engine.pluck({ freq: a.freq, amp: a.amp, pan: a.pan });
+  if (dual) {
+    const b = soundFor(track.second, index, COMPARE_PAN);
+    state.engine2.pluck({ freq: b.freq, amp: b.amp, pan: b.pan });
+  }
+  if (el.decades.checked && isDecadeStart(track.labels[index])) state.engine.tick();
+}
+
+// "1998: +0.61 °C", or both values for a comparison.
+function stepText(index) {
+  const { track, item } = state;
+  if (!track.second) return `${formatLabel(track.labels[index])}: ${formatValue(track.values[index], item)}`;
+  const names = item.data.names || ["Left", "Right"];
+  return `${track.labels[index]}: ${names[0]} ${formatValue(track.values[index], item)}, ${names[1]} ${formatValue(track.second.values[index], item)}`;
+}
+
 function tickData() {
   const { track, item } = state;
   const x = state.pos / stepSeconds();
   const index = Math.min(track.length - 1, Math.floor(x));
-  const params = computeSoundParams(featuresAt(track, x), item.mapping, { curve: el.curve.value });
-  state.params = params;
-  if (state.playing) state.engine.update(params);
+  const dual = !!track.second;
+  state.params = soundFor(track, x, dual ? -COMPARE_PAN : undefined);
+  state.params2 = dual ? soundFor(track.second, x, COMPARE_PAN) : null;
+  if (state.playing) {
+    state.engine.update(state.params);
+    if (dual) state.engine2.update(state.params2);
+  }
   if (index !== state.lastIdx) {
     if (state.playing) {
-      const note = computeSoundParams(track.features[index], item.mapping, { curve: el.curve.value });
-      state.engine.pluck({ freq: note.freq, amp: note.amp, pan: note.pan });
+      if (shouldPluck(track.labels[index], item.timing)) playStepNotes(index);
+      else if (el.decades.checked && isDecadeStart(track.labels[index])) state.engine.tick();
     }
     state.lastIdx = index;
     state.dirty = true;
@@ -405,6 +503,49 @@ function tickData() {
     drawDataStage(el.canvas, track, item, x, { reducedMotion: el.reduced.checked });
     state.dirty = false;
   }
+}
+
+// Explore at your own pace: move one step, play its note, and read out its value.
+async function stepBy(delta) {
+  const { track } = state;
+  if (!track) return;
+  cancelGuide();
+  if (state.playing) pause("");
+  await ensureAudio();
+  const current = clamp(Math.floor(state.pos / stepSeconds() + 1e-6), 0, track.length - 1);
+  const index = clamp(current + delta, 0, track.length - 1);
+  seek(index * stepSeconds() + 0.001);
+  state.lastIdx = index;
+  playStepNotes(index);
+  const moment = onDataStep(index);
+  const text = moment ? `${stepText(index)}. ${moment.replace(/^[^:]{4,14}: /, "")}` : stepText(index);
+  setStatus(text);
+}
+
+// An audible legend: the lowest note, the baseline (if there is one) and the highest note.
+async function playLegend() {
+  const item = state.item;
+  if (!item) return;
+  pause("");
+  await ensureAudio();
+  const notes = [];
+  const add = (level, text) => {
+    const features = { value: level, trend: level, change: 0, progress: 0.5, brightness: level, colorAmount: level, warmth: level, centroidX: 0.5 };
+    notes.push({ freq: computeSoundParams(features, item.mapping, { curve: el.curve.value }).freq, text });
+  };
+  const track = state.track;
+  if (item.kind === "data" && track) {
+    add(0, `the lowest value, ${formatValue(track.min, item)}`);
+    if (item.data.signed && track.min < 0 && track.max > 0) add(normalize(0, track.min, track.max), `the baseline, 0 ${item.data.unit}`);
+    add(1, `the highest value, ${formatValue(track.max, item)}`);
+  } else {
+    add(0, "the lowest note this item plays");
+    add(1, "the highest note this item plays");
+  }
+  setStatus(`Reference notes, in order: ${notes.map((n) => n.text).join("; ")}.`);
+  notes.forEach((n, i) => {
+    state.engine.pluck({ freq: n.freq, amp: 0.8, pan: 0, decay: 0.7 }, state.ctx.currentTime + 0.2 + i * 0.85);
+  });
 }
 
 function analyse(source) {
@@ -471,7 +612,7 @@ function updateTransport(ts) {
   let text;
   if (item.kind === "data" && state.track) {
     const index = clamp(Math.floor(state.pos / stepSeconds()), 0, state.track.length - 1);
-    text = `${state.track.labels[index]} · ${formatValue(state.track.values[index], item)}`;
+    text = stepText(index).replace(": ", " · ");
   } else {
     text = `${formatClock(state.pos)} of ${formatClock(state.duration || 0)}`;
   }
@@ -482,6 +623,12 @@ function updateTransport(ts) {
   if (ts - state.lastReadout > 250 && state.params) {
     state.lastReadout = ts;
     const p = state.params;
+    if (state.params2 && item.kind === "data") {
+      const names = item.data.names || ["Left", "Right"];
+      const dualText = `Left ear, ${names[0]}: note ${noteName(p.midi)} (${Math.round(p.freq)} Hz) · Right ear, ${names[1]}: note ${noteName(state.params2.midi)} (${Math.round(state.params2.freq)} Hz)`;
+      if (el.readout.textContent !== dualText) el.readout.textContent = dualText;
+      return;
+    }
     const side = Math.abs(p.pan) < 0.05 ? "centre" : `${Math.round(Math.abs(p.pan) * 100)}% ${p.pan < 0 ? "left" : "right"}`;
     const parts = [
       `Note ${noteName(p.midi)} (${Math.round(p.freq)} Hz)`,
@@ -490,7 +637,7 @@ function updateTransport(ts) {
       `position ${side}`,
       `hiss ${Math.round(p.texture * 100)}%`,
     ];
-    if (item.mapping.density) parts.push(`${p.rate.toFixed(1)} notes per second`);
+    if (item.mapping.density?.feature) parts.push(`${p.rate.toFixed(1)} notes per second`);
     const textNow = parts.join(" · ");
     if (el.readout.textContent !== textNow) el.readout.textContent = textNow;
   }
@@ -556,6 +703,8 @@ async function exportAudio() {
       stepSeconds: stepSeconds() / speed(),
       curve: el.curve.value,
       volume: Math.max(0.2, el.volume.value / 100),
+      decadeTicks: el.decades.checked,
+      timing: item.timing,
     });
     download(encodeWav(buffer), `earth-jukebox-${item.id}.wav`);
     download(new Blob([mappingNotes(item)], { type: "text/plain" }), `earth-jukebox-${item.id}-notes.txt`);
@@ -642,13 +791,34 @@ async function init() {
     }
   });
 
-  el.play.addEventListener("click", () => (state.playing ? pause() : play()));
+  el.play.addEventListener("click", () => {
+    if (state.guiding) {
+      cancelGuide();
+      setStatus("Tour stopped. Press Play to carry on.");
+      return;
+    }
+    state.playing ? pause() : play();
+  });
   el.restart.addEventListener("click", () => {
+    cancelGuide();
     seek(0);
     setStatus("Back at the start.");
   });
   el.timeline.addEventListener("pointerdown", () => { state.scrubbing = true; });
-  el.timeline.addEventListener("input", () => seek(parseFloat(el.timeline.value)));
+  el.timeline.addEventListener("input", () => {
+    seek(parseFloat(el.timeline.value));
+    // While paused on a measurement item, moving the timeline plays the note you land on.
+    if (!state.playing && state.item?.kind === "data" && state.track) {
+      const index = clamp(Math.floor(state.pos / stepSeconds() + 1e-6), 0, state.track.length - 1);
+      if (index !== state.scrubIdx) {
+        state.scrubIdx = index;
+        ensureAudio().then(() => playStepNotes(index));
+      }
+    }
+  });
+  el.prev.addEventListener("click", () => stepBy(-1));
+  el.next.addEventListener("click", () => stepBy(1));
+  el.legend.addEventListener("click", playLegend);
   for (const type of ["pointerup", "pointercancel", "change", "blur"]) {
     el.timeline.addEventListener(type, () => { state.scrubbing = false; });
   }

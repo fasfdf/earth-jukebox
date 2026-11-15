@@ -43,6 +43,15 @@ node tests/math.test.mjs
 | Arctic temperature, 1880–2025 | **Scientific data**: GISTEMP v4 zonal annual means, 64°N–90°N | NASA GISS, <https://data.giss.nasa.gov/gistemp/> |
 | Carbon dioxide in the air, 1959–2025 | **Scientific data**: Mauna Loa annual mean | NOAA Global Monitoring Laboratory, <https://gml.noaa.gov/ccgg/trends/> |
 | Arctic sea ice in September, 1979–2026 | **Scientific data**: Sea Ice Index monthly extent | NSIDC, <https://nsidc.org/data/g02135> |
+| Compare: Arctic against the whole planet | **Scientific data**, two records at once, one in each ear | NASA GISS |
+| Compare: north half against south half | **Scientific data**, two records at once, one in each ear | NASA GISS |
+| The planet breathing: carbon dioxide month by month, 1958–2026 | **Scientific data**: Mauna Loa monthly mean | NOAA Global Monitoring Laboratory |
+| Methane in the air, 1984–2025 | **Scientific data**: global annual mean | NOAA Global Monitoring Laboratory, <https://gml.noaa.gov/ccgg/trends_ch4/> |
+| Antarctic sea ice in February, 1979–2026 | **Scientific data**: Sea Ice Index monthly extent | NSIDC |
+| Global temperature month by month, 1880–2026 | **Scientific data**: GISTEMP v4 monthly anomaly | NASA GISS |
+| The Antarctic ozone hole, 1979–2025 | **Scientific data**: mean hole area, 7 Sept–13 Oct | NASA Ozone Watch, <https://ozonewatch.gsfc.nasa.gov/> |
+| Heat stored in the ocean, 2005–2025 | **Scientific data**: 0–2000 m heat content | NOAA NCEI, <https://www.ncei.noaa.gov/access/global-ocean-heat-content/> |
+| Compare: Arctic sea ice in winter and in summer | **Scientific data**, two records at once, one in each ear | NSIDC |
 | Global temperature map animation | **Image features** of each video frame | NASA SVS visualization 5603, <https://svs.gsfc.nasa.gov/5603/> |
 | Spread of the Dixie Fire, 2021 | **Image features** of each video frame | NASA SVS visualization 4993, <https://svs.gsfc.nasa.gov/4993/> |
 | Ocean surface currents and temperature, 2007–2008 | **Image features** | NASA SVS visualization 3912, <https://svs.gsfc.nasa.gov/3912/> |
@@ -165,6 +174,16 @@ Visible light (about 380–750 nm) is roughly 400–790 THz, far above hearing. 
 - All output passes through a limiter and a fixed ceiling. Pausing, seeking or switching items cancels scheduled sound and fades out within a few hundredths of a second.
 - "Download audio (WAV)" renders data-driven items offline with the same engine and mapping, and saves a text file of listening notes alongside.
 
+## Going deeper into each record
+
+- **Step through at your own pace.** "Previous year" and "Next year" (or the arrow keys on the timeline) move one step, play that step's note and read out its value.
+- **Reference notes.** "Hear the reference notes" plays the lowest value, the baseline and the highest value before you listen, with each one named, so the pitch range has meaning.
+- **Decade ticks.** A low tick marks the start of each decade, for orientation in time. It can be turned off.
+- **Comparisons.** Two records play on one shared pitch scale, one in each ear, so a difference between them is heard directly.
+- **Guided tour.** Playback stops at each key moment so its description can be read by a screen reader, or spoken by the browser, without talking over the notes, then carries on.
+- **The numbers themselves.** Each measurement item links to the file of values it plays.
+- **Background.** Each measurement item says how the measurement is made and why it matters.
+
 ## Accessibility
 
 - No autoplay, and a mute button beside the volume control. Every control works from the keyboard, has a visible focus ring and a text label.
@@ -209,6 +228,9 @@ Data features available: `value`, `trend`, `change`, `progress`. Frame features:
 - "Global Sea Surface Currents and Temperature", NASA/Goddard Space Flight Center Scientific Visualization Studio, visualization 3912. <https://svs.gsfc.nasa.gov/3912/>
 - "Lightning Events Detected from the International Space Station (ISS) 2017-2023", NASA's Scientific Visualization Studio, visualization 5011. <https://svs.gsfc.nasa.gov/5011/>
 - NOAA Global Monitoring Laboratory, Trends in Atmospheric Carbon Dioxide, Mauna Loa Observatory. <https://gml.noaa.gov/ccgg/trends/>
+- NOAA Global Monitoring Laboratory, Trends in Atmospheric Methane. <https://gml.noaa.gov/ccgg/trends_ch4/>
+- NASA Ozone Watch, NASA Goddard Space Flight Center. <https://ozonewatch.gsfc.nasa.gov/>
+- NOAA National Centers for Environmental Information, Global Ocean Heat and Salt Content. <https://www.ncei.noaa.gov/access/global-ocean-heat-content/>
 - National Snow and Ice Data Center, Sea Ice Index (G02135). <https://nsidc.org/data/g02135>
 - NASA Earth Information Center gallery. <https://svs.gsfc.nasa.gov/gallery/earth-information-center/>
 - NASA, "Electromagnetic Math". <https://science.nasa.gov/wp-content/uploads/2023/09/Electromagnetic_Math.pdf>
