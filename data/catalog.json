@@ -6,7 +6,7 @@
       "kind": "data",
       "derivedFrom": "scientific-data",
       "title": "Global temperature, 1880–2025 (from NASA data)",
-      "description": "Each year from 1880 to 2025 becomes one note. The picture shows one colored stripe per year (blue for cooler than the 1951–1980 average, red for warmer) with a line tracing the same values.",
+      "description": "Each year from 1880 to 2025 becomes one note, taken from NASA's measured global temperature record. NASA's map animation of the same record plays in step above a chart with one colored stripe per year (blue for cooler than the 1951–1980 average, red for warmer) and a line tracing the values.",
       "summary": "For the first sixty years the notes stay low and wander. From about 1980 they climb steadily, and the last decade holds the highest notes of the whole piece. The warmest year in the record is 2024.",
       "keyMoments": [
         {
@@ -53,7 +53,13 @@
         "stepSeconds": 0.25
       },
       "visual": {
-        "type": "stripes"
+        "type": "stripes",
+        "companion": {
+          "local": "assets/clips/temperature_map.mp4",
+          "secondsPerStep": 0.4,
+          "label": "NASA's map animation of the same data (visualization 5603)"
+        },
+        "caption": "a chart with one stripe per year. Blue is cooler than the 1951–1980 average and red is warmer; the line and the label show the same values, so nothing depends on color alone."
       },
       "mapping": {
         "waveform": "triangle",
@@ -113,13 +119,350 @@
         "Notes are snapped to a musical scale, so two years with slightly different values can share a note. Switch the pitch curve to Linear or Logarithmic to hear the unsnapped values.",
         "Values were read from the NASA GISS file on 15 November 2026. NASA revises recent years slightly over time; run tools/update_data.py to refresh them."
       ],
-      "timeRange": "1880 to 2025, one value per year"
+      "timeRange": "1880 to 2025, one value per year",
+      "group": "measurements"
+    },
+    {
+      "id": "arctic-temperature",
+      "kind": "data",
+      "derivedFrom": "scientific-data",
+      "title": "Arctic temperature, 1880–2025 (from NASA data)",
+      "description": "Each year from 1880 to 2025 becomes one note, taken from NASA's temperature record for the Arctic, the region north of 64° latitude. Values are compared with the 1951–1980 average. The chart shows one colored stripe per year with a line tracing the values.",
+      "summary": "The Arctic swings far more from year to year than the planet as a whole, so the notes leap around. There is a cold stretch in the 1880s, a warm spell around 1940, a cooler dip in the 1960s, and then a steep climb from the 1990s. Over the last ten years the Arctic averaged about 2.6 °C above its 1951–1980 level, roughly two and a half times the global figure of about 1.0 °C.",
+      "keyMoments": [
+        {
+          "at": 1887,
+          "text": "1887: the coldest year in the record, about 1.73 °C below the average. This is the lowest note."
+        },
+        {
+          "at": 1938,
+          "text": "1938: the peak of an early warm spell, about 1.52 °C above the average."
+        },
+        {
+          "at": 1966,
+          "text": "1966: a cold dip, about 0.76 °C below the average."
+        },
+        {
+          "at": 1992,
+          "text": "1992: the last year colder than the 1951–1980 average."
+        },
+        {
+          "at": 2005,
+          "text": "2005: the first year at least 2 °C above the average."
+        },
+        {
+          "at": 2016,
+          "text": "2016: the warmest year in the record, about 3.23 °C above the average. This is the highest note."
+        },
+        {
+          "at": 2025,
+          "text": "2025: the record ends at about 2.93 °C above the average, the second-warmest year."
+        }
+      ],
+      "data": {
+        "file": "data/arctic_temperature_annual.json",
+        "unit": "°C",
+        "valueLabel": "Arctic temperature anomaly",
+        "stepLabel": "Year",
+        "signed": true,
+        "decimals": 2
+      },
+      "timing": {
+        "stepSeconds": 0.25
+      },
+      "visual": {
+        "type": "stripes",
+        "caption": "A chart with one stripe per year. Blue is cooler than the 1951–1980 average and red is warmer; the line and the label show the same values, so nothing depends on color alone."
+      },
+      "mapping": {
+        "waveform": "triangle",
+        "pitch": {
+          "feature": "value",
+          "curve": "quantized",
+          "fMin": 220,
+          "fMax": 880,
+          "scale": "pentatonicMinor",
+          "root": 57,
+          "drivenBy": "Arctic temperature anomaly for the year",
+          "explain": "Warmer year, higher note. Cooler year, lower note.",
+          "bounds": "220–880 Hz (A3 to A5), snapped to a five-note scale"
+        },
+        "loudness": {
+          "feature": "trend",
+          "min": 0.45,
+          "max": 0.9,
+          "drivenBy": "Nine-year average temperature",
+          "explain": "As the long-term average rises, the sound gets gently louder.",
+          "bounds": "Always between half and full level, under a fixed ceiling"
+        },
+        "timbre": {
+          "feature": "value",
+          "min": 0.15,
+          "max": 0.9,
+          "drivenBy": "Arctic temperature anomaly for the year",
+          "explain": "Cooler years sound soft and mellow. Warmer years sound brighter and sharper.",
+          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
+        },
+        "pan": {
+          "feature": "progress",
+          "min": -0.7,
+          "max": 0.7,
+          "drivenBy": "Position in time",
+          "explain": "The sound travels from your left ear (1880) to your right ear (2025).",
+          "bounds": "70% left to 70% right"
+        },
+        "texture": {
+          "feature": "change",
+          "max": 0.8,
+          "drivenBy": "Change from the previous year",
+          "explain": "A soft, low rush of air appears only when one year is very different from the year before.",
+          "bounds": "Very quiet, and silent for small changes"
+        }
+      },
+      "source": {
+        "name": "GISS Surface Temperature Analysis (GISTEMP v4), zonal annual means, NASA Goddard Institute for Space Studies",
+        "url": "https://data.giss.nasa.gov/gistemp/",
+        "attribution": "GISTEMP Team, 2026: GISS Surface Temperature Analysis (GISTEMP), version 4. NASA Goddard Institute for Space Studies.",
+        "license": "NASA data, free to reuse with credit. See the GISTEMP page for citation guidance.",
+        "accessed": "2026-11-15"
+      },
+      "limitations": [
+        "The pitch range is fitted to the Arctic's own record, which spans almost 5 °C. The same note here and in the global temperature item does not mean the same temperature. Compare the numbers, not the notes.",
+        "Notes are snapped to a musical scale. Switch the pitch curve to Linear or Logarithmic to hear the unsnapped values.",
+        "Early Arctic values rest on few weather stations and are less certain than recent ones."
+      ],
+      "timeRange": "1880 to 2025, one value per year",
+      "group": "measurements"
+    },
+    {
+      "id": "co2-mauna-loa",
+      "kind": "data",
+      "derivedFrom": "scientific-data",
+      "title": "Carbon dioxide in the air, 1959–2025 (from NOAA data)",
+      "description": "Each year from 1959 to 2025 becomes one note, taken from the yearly average amount of carbon dioxide in the air measured at Mauna Loa Observatory in Hawaii, in parts per million. The chart shows one colored stripe per year with a line tracing the values.",
+      "summary": "The notes only ever go up. Carbon dioxide rises every single year in the record, from about 316 parts per million in 1959 to about 427 in 2025. The climb also gets steeper: about 0.9 parts per million a year in the 1960s, and about 2.6 a year over the last ten years. A brighter, sharper tone marks the years with the biggest jumps.",
+      "keyMoments": [
+        {
+          "at": 1959,
+          "text": "1959: the first full year of measurements, about 316 parts per million. This is the lowest note."
+        },
+        {
+          "at": 1988,
+          "text": "1988: carbon dioxide passes 350 parts per million."
+        },
+        {
+          "at": 2015,
+          "text": "2015: carbon dioxide passes 400 parts per million."
+        },
+        {
+          "at": 2023,
+          "text": "2023: carbon dioxide passes 420 parts per million."
+        },
+        {
+          "at": 2024,
+          "text": "2024: the largest one-year rise in the record, about 3.5 parts per million."
+        },
+        {
+          "at": 2025,
+          "text": "2025: about 427 parts per million, the highest in the record. This is the highest note."
+        }
+      ],
+      "data": {
+        "file": "data/co2_annual.json",
+        "unit": "ppm",
+        "valueLabel": "Carbon dioxide",
+        "stepLabel": "Year",
+        "signed": false,
+        "decimals": 1
+      },
+      "timing": {
+        "stepSeconds": 0.4
+      },
+      "visual": {
+        "type": "stripes",
+        "center": "mid",
+        "caption": "A chart with one stripe per year. Stripes run from blue for the lowest values in the record to red for the highest; the line and the label show the same values, so nothing depends on color alone."
+      },
+      "mapping": {
+        "waveform": "triangle",
+        "pitch": {
+          "feature": "value",
+          "curve": "quantized",
+          "fMin": 220,
+          "fMax": 880,
+          "scale": "pentatonicMinor",
+          "root": 57,
+          "drivenBy": "Carbon dioxide for the year",
+          "explain": "More carbon dioxide, higher note.",
+          "bounds": "220–880 Hz (A3 to A5), snapped to a five-note scale"
+        },
+        "loudness": {
+          "feature": "trend",
+          "min": 0.45,
+          "max": 0.9,
+          "drivenBy": "Nine-year average carbon dioxide",
+          "explain": "As the long-term level rises, the sound gets gently louder.",
+          "bounds": "Always between half and full level, under a fixed ceiling"
+        },
+        "timbre": {
+          "feature": "change",
+          "min": 0.15,
+          "max": 0.9,
+          "drivenBy": "Size of the rise since the previous year",
+          "explain": "A bigger one-year rise sounds brighter and sharper. A smaller rise sounds mellow.",
+          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
+        },
+        "pan": {
+          "feature": "progress",
+          "min": -0.7,
+          "max": 0.7,
+          "drivenBy": "Position in time",
+          "explain": "The sound travels from your left ear (1959) to your right ear (2025).",
+          "bounds": "70% left to 70% right"
+        },
+        "texture": {
+          "feature": "change",
+          "max": 0,
+          "drivenBy": "Change from the previous year",
+          "explain": "Not used for this item.",
+          "bounds": "Silent"
+        }
+      },
+      "source": {
+        "name": "Trends in Atmospheric Carbon Dioxide, Mauna Loa Observatory, NOAA Global Monitoring Laboratory",
+        "url": "https://gml.noaa.gov/ccgg/trends/",
+        "attribution": "NOAA Global Monitoring Laboratory and Scripps Institution of Oceanography.",
+        "license": "NOAA data, freely available with credit to NOAA GML.",
+        "accessed": "2026-11-15",
+        "related": "This record is from NOAA, not NASA. NASA shows the same measurements on its climate pages."
+      },
+      "limitations": [
+        "These are yearly averages from one mountain-top station. They track the global trend closely but leave out the seasonal rise and fall within each year.",
+        "Notes are snapped to a musical scale, so two neighbouring years can share a note even though the value rose. Switch the pitch curve to Linear or Logarithmic to hear every rise."
+      ],
+      "timeRange": "1959 to 2025, one value per year",
+      "group": "measurements"
+    },
+    {
+      "id": "arctic-sea-ice",
+      "kind": "data",
+      "derivedFrom": "scientific-data",
+      "title": "Arctic sea ice in September, 1979–2026 (from satellite data)",
+      "description": "Each year from 1979 to 2026 becomes one note, taken from the satellite record of how much of the Arctic Ocean is covered by sea ice in September, the month when the ice is at its smallest. Values are in millions of square kilometres. The chart shows one colored stripe per year with a line tracing the values.",
+      "summary": "Here a falling note means less ice. The notes start high and drift down for twenty years, drop sharply in 2007, and hit the lowest note in 2012. Since then they have stayed low without falling further. September ice averaged about 7.2 million square kilometres in the first ten years of the record and about 4.6 million in the last ten, a loss of more than a third.",
+      "keyMoments": [
+        {
+          "at": 1980,
+          "text": "1980: the most September ice in the record, about 7.67 million square kilometres. This is the highest note."
+        },
+        {
+          "at": 1996,
+          "text": "1996: the last year close to the early levels, about 7.58 million square kilometres."
+        },
+        {
+          "at": 2003,
+          "text": "2003: the last September with more than 6 million square kilometres of ice."
+        },
+        {
+          "at": 2007,
+          "text": "2007: a sharp drop to about 4.27 million square kilometres."
+        },
+        {
+          "at": 2012,
+          "text": "2012: the least September ice in the record, about 3.57 million square kilometres. This is the lowest note."
+        },
+        {
+          "at": 2020,
+          "text": "2020: the second-lowest year, about 4.00 million square kilometres."
+        },
+        {
+          "at": 2026,
+          "text": "2026: the record ends at about 4.81 million square kilometres."
+        }
+      ],
+      "data": {
+        "file": "data/arctic_sea_ice_september.json",
+        "unit": "million km²",
+        "valueLabel": "Sea ice extent",
+        "stepLabel": "Year",
+        "signed": false,
+        "decimals": 2
+      },
+      "timing": {
+        "stepSeconds": 0.5
+      },
+      "visual": {
+        "type": "stripes",
+        "center": "mid",
+        "invertColors": true,
+        "caption": "A chart with one stripe per year. Blue stripes are years with more ice and red stripes are years with less; the line and the label show the same values, so nothing depends on color alone."
+      },
+      "mapping": {
+        "waveform": "triangle",
+        "pitch": {
+          "feature": "value",
+          "curve": "quantized",
+          "fMin": 220,
+          "fMax": 880,
+          "scale": "pentatonicMinor",
+          "root": 57,
+          "drivenBy": "September sea ice extent for the year",
+          "explain": "More ice, higher note. Less ice, lower note.",
+          "bounds": "220–880 Hz (A3 to A5), snapped to a five-note scale"
+        },
+        "loudness": {
+          "feature": "progress",
+          "min": 0.7,
+          "max": 0.7,
+          "drivenBy": "Nothing: held steady",
+          "explain": "Loudness stays the same throughout, so quiet is never mistaken for less ice.",
+          "bounds": "Fixed level, under a fixed ceiling"
+        },
+        "timbre": {
+          "feature": "value",
+          "min": 0.15,
+          "max": 0.9,
+          "drivenBy": "September sea ice extent for the year",
+          "explain": "Years with more ice sound brighter. Years with less ice sound duller and more muffled.",
+          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
+        },
+        "pan": {
+          "feature": "progress",
+          "min": -0.7,
+          "max": 0.7,
+          "drivenBy": "Position in time",
+          "explain": "The sound travels from your left ear (1979) to your right ear (2026).",
+          "bounds": "70% left to 70% right"
+        },
+        "texture": {
+          "feature": "change",
+          "max": 0.8,
+          "drivenBy": "Change from the previous year",
+          "explain": "A soft, low rush of air appears only when one year is very different from the year before, as in 2007.",
+          "bounds": "Very quiet, and silent for small changes"
+        }
+      },
+      "source": {
+        "name": "Sea Ice Index (dataset G02135), National Snow and Ice Data Center",
+        "url": "https://nsidc.org/data/g02135",
+        "attribution": "National Snow and Ice Data Center (NSIDC), Boulder, Colorado USA.",
+        "license": "Freely available with credit to NSIDC. See the dataset page for the full citation.",
+        "accessed": "2026-11-15",
+        "related": "This record is from NSIDC, a data center supported by NASA and NOAA. It is built from satellite microwave measurements."
+      },
+      "limitations": [
+        "Extent counts ocean area with at least 15% ice cover. It says nothing about how thick the ice is, and thickness has also declined.",
+        "Only September is included, so the yearly freeze and melt cycle is not heard.",
+        "Notes are snapped to a musical scale. Switch the pitch curve to Linear or Logarithmic to hear the unsnapped values."
+      ],
+      "timeRange": "1979 to 2026, one value per year",
+      "group": "measurements"
     },
     {
       "id": "svs-5603-frames",
       "kind": "video",
       "derivedFrom": "image-features",
-      "title": "Global temperature map animation (from NASA frames)",
+      "title": "Global temperature map, by color (from NASA frames)",
       "description": "NASA's animated world map of temperature anomalies from 1880 to 2025. Blues mark places cooler than the 1951–1980 average and reds mark places warmer. Here the sound is computed live from the colors of each video frame, not from the temperature numbers.",
       "summary": "Early in the animation the map is a patchwork of pale blues and reds. Toward the end, red spreads across almost the whole map, most strongly over the Arctic and the northern continents.",
       "keyMoments": [],
@@ -219,7 +562,8 @@
         "For the measured values, listen to the 'from NASA data' item, which uses the GISTEMP numbers behind this map.",
         "The year shown on screen is not read by the app. The animation runs from 1880 to 2025 at a steady pace over one minute."
       ],
-      "timeRange": "1880 to 2025"
+      "timeRange": "1880 to 2025",
+      "group": "frames"
     },
     {
       "id": "svs-4993-dixie",
@@ -327,114 +671,8 @@
         "The on-screen graph and labels are part of the picture and can affect the sound.",
         "This is the 4x-speed version of NASA's animation."
       ],
-      "timeRange": "14 July to 22 October 2021"
-    },
-    {
-      "id": "svs-5196-co2",
-      "kind": "video",
-      "derivedFrom": "image-features",
-      "title": "Global carbon dioxide, January to March 2020 (from NASA frames)",
-      "description": "NASA's animation of carbon dioxide in the atmosphere from January through March 2020, from a high-resolution Earth system model. The camera flies low through hazy brown-orange plumes over North America, then pulls back to show the globe. The sound is computed live from the colors of each frame.",
-      "summary": "For most of the flight the picture is dark and hazy, with orange plumes drifting past. Near the end the camera pulls back, the globe and snow-covered land come into view, and bright orange hot spots mark strong sources along the west coast of North America.",
-      "keyMoments": [],
-      "timing": {
-        "sampleSeconds": 0.08
-      },
-      "visual": {
-        "type": "video",
-        "local": "assets/clips/carbon_dioxide.mp4",
-        "remote": "https://svs.gsfc.nasa.gov/vis/a000000/a005100/a005196/dyamondPointCloud_12-4-2023b_dyamond_co2_anim_globe_tilt_1080p30.mp4"
-      },
-      "colorTarget": "fire",
-      "featureRanges": {
-        "brightness": [
-          0.055,
-          0.23
-        ],
-        "colorAmount": [
-          0,
-          0.005
-        ],
-        "change": [
-          0,
-          0.035
-        ],
-        "warmth": [
-          0,
-          1
-        ],
-        "centroidX": [
-          0.15,
-          0.65
-        ]
-      },
-      "mapping": {
-        "waveform": "triangle",
-        "pitch": {
-          "feature": "brightness",
-          "curve": "quantized",
-          "fMin": 220,
-          "fMax": 880,
-          "scale": "pentatonicMinor",
-          "root": 57,
-          "drivenBy": "Overall brightness of the frame",
-          "explain": "A brighter picture, higher note. A darker picture, lower note.",
-          "bounds": "220–880 Hz (A3 to A5), snapped to a five-note scale"
-        },
-        "density": {
-          "feature": "colorAmount",
-          "minRate": 0.5,
-          "maxRate": 6,
-          "drivenBy": "Share of the frame showing vivid orange-red hot spots",
-          "explain": "More hot spots on screen, faster notes.",
-          "bounds": "From one note every two seconds up to six notes a second"
-        },
-        "loudness": {
-          "feature": "brightness",
-          "min": 0.4,
-          "max": 0.85,
-          "drivenBy": "Overall brightness of the frame",
-          "explain": "A brighter picture sounds a little louder.",
-          "bounds": "Always under a fixed ceiling, with a volume control"
-        },
-        "timbre": {
-          "feature": "colorAmount",
-          "min": 0.2,
-          "max": 0.85,
-          "drivenBy": "Share of the frame showing vivid orange-red hot spots",
-          "explain": "More hot spots make the tone brighter.",
-          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
-        },
-        "pan": {
-          "feature": "centroidX",
-          "min": -0.8,
-          "max": 0.8,
-          "drivenBy": "Where the hot spots sit, left to right",
-          "explain": "If the hot spots are mostly on the left, the sound moves left, and the same for the right.",
-          "bounds": "80% left to 80% right"
-        },
-        "texture": {
-          "feature": "change",
-          "max": 0.6,
-          "drivenBy": "How much the picture changed since the last sample",
-          "explain": "A soft, low rush of air appears only when the picture is changing quickly. Most of the time it is silent.",
-          "bounds": "Very quiet, and silent for small changes"
-        }
-      },
-      "source": {
-        "name": "DYAMOND Global Carbon Dioxide, NASA Scientific Visualization Studio (visualization 5196)",
-        "url": "https://svs.gsfc.nasa.gov/5196/",
-        "attribution": "NASA's Scientific Visualization Studio",
-        "license": "NASA media. Credit NASA's Scientific Visualization Studio and follow NASA's media usage guidelines.",
-        "accessed": "2026-11-15",
-        "related": "Part of the Earth Information Center gallery, https://svs.gsfc.nasa.gov/gallery/earth-information-center/"
-      },
-      "limitations": [
-        "This sound is derived from image features. The exact concentration each color stands for is given on NASA's separate color bar, not in the video.",
-        "Most of the change in this sound comes from the camera moving through the scene, not from the carbon dioxide changing. Treat it as a way to experience the visualization rather than a reading of the data.",
-        "The animation shows model output, not direct measurements."
-      ],
-      "timeRange": "January to March 2020"
+      "timeRange": "14 July to 22 October 2021",
+      "group": "frames"
     },
     {
       "id": "svs-3912-ocean",
@@ -540,7 +778,8 @@
         "This sound is derived from image features. It follows the balance of warm and cool colors on screen, not the temperature values themselves.",
         "The whole-ocean picture changes only a little over the year, so the app stretches those small changes to make them audible. The size of a change in the sound is not the size of the change in the ocean."
       ],
-      "timeRange": "25 March 2007 to 3 March 2008"
+      "timeRange": "25 March 2007 to 3 March 2008",
+      "group": "frames"
     },
     {
       "id": "svs-5011-lightning",
@@ -647,113 +886,8 @@
         "The globe turns during the animation, so lightning-rich regions come into view and leave it. Some of the rise and fall you hear is the turning globe, not a change in lightning.",
         "The sensor sees only the part of Earth beneath the Space Station's orbit, so high latitudes are not covered."
       ],
-      "timeRange": "January 2017 to July 2023"
-    },
-    {
-      "id": "svs-4960-river",
-      "kind": "video",
-      "derivedFrom": "image-features",
-      "title": "An atmospheric river in 3D (from NASA frames)",
-      "description": "NASA's three-dimensional view of an atmospheric river: a band of tropical moisture that forms over the ocean and moves toward the western United States, with clouds and precipitation from NASA's MERRA-2 reanalysis. Blue shading shows water vapor being carried along. The sound is computed live from the colors of each frame.",
-      "summary": "The animation opens on the whole Earth wrapped in white cloud, then moves in over the north-east Pacific. A long blue band, labelled as the atmospheric river, stretches from the tropics toward the west coast of North America, curving around an area of high pressure marked H. Side-on views show the moisture as a layer above the ocean, and a close-up shows it being forced upward where it meets the coastal mountains. The animation ends by pulling back to the full globe.",
-      "keyMoments": [],
-      "timing": {
-        "sampleSeconds": 0.08
-      },
-      "visual": {
-        "type": "video",
-        "local": "assets/clips/atmospheric_river.mp4",
-        "remote": "https://svs.gsfc.nasa.gov/vis/a000000/a004900/a004960/atmos_river_HD.webm"
-      },
-      "colorTarget": "cool",
-      "featureRanges": {
-        "brightness": [
-          0.14,
-          0.41
-        ],
-        "colorAmount": [
-          0,
-          0.68
-        ],
-        "change": [
-          0,
-          0.045
-        ],
-        "warmth": [
-          0,
-          1
-        ],
-        "centroidX": [
-          0.28,
-          0.67
-        ]
-      },
-      "mapping": {
-        "waveform": "triangle",
-        "pitch": {
-          "feature": "colorAmount",
-          "curve": "quantized",
-          "fMin": 220,
-          "fMax": 880,
-          "scale": "pentatonicMinor",
-          "root": 57,
-          "drivenBy": "Share of the frame covered by blue shading",
-          "explain": "More blue water-vapor shading on screen, higher note.",
-          "bounds": "220–880 Hz (A3 to A5), snapped to a five-note scale"
-        },
-        "density": {
-          "feature": "colorAmount",
-          "minRate": 0.5,
-          "maxRate": 6,
-          "drivenBy": "Share of the frame covered by blue shading",
-          "explain": "More blue shading, faster notes.",
-          "bounds": "From one note every two seconds up to six notes a second"
-        },
-        "loudness": {
-          "feature": "brightness",
-          "min": 0.4,
-          "max": 0.85,
-          "drivenBy": "Overall brightness of the frame",
-          "explain": "A brighter picture sounds a little louder.",
-          "bounds": "Always under a fixed ceiling, with a volume control"
-        },
-        "timbre": {
-          "feature": "colorAmount",
-          "min": 0.2,
-          "max": 0.85,
-          "drivenBy": "Share of the frame covered by the selected color",
-          "explain": "More of the selected color makes the tone brighter.",
-          "bounds": "Filter opens from 1.5× to 9× the note's pitch"
-        },
-        "pan": {
-          "feature": "centroidX",
-          "min": -0.8,
-          "max": 0.8,
-          "drivenBy": "Where the blue shading sits, left to right",
-          "explain": "If the moisture is mostly on the left, the sound moves left, and the same for the right.",
-          "bounds": "80% left to 80% right"
-        },
-        "texture": {
-          "feature": "change",
-          "max": 0.6,
-          "drivenBy": "How much the picture changed since the last sample",
-          "explain": "A soft, low rush of air appears only when the picture is changing quickly. Most of the time it is silent.",
-          "bounds": "Very quiet, and silent for small changes"
-        }
-      },
-      "source": {
-        "name": "A 3D View of an Atmospheric River from an Earth System Model, NASA Scientific Visualization Studio (visualization 4960)",
-        "url": "https://svs.gsfc.nasa.gov/4960/",
-        "attribution": "NASA's Scientific Visualization Studio",
-        "license": "NASA media. Credit as shown and follow NASA's media usage guidelines.",
-        "accessed": "2026-11-15",
-        "related": "Part of the Earth Information Center gallery, https://svs.gsfc.nasa.gov/gallery/earth-information-center/"
-      },
-      "limitations": [
-        "This sound is derived from image features. It follows the blue shading on screen, not the water vapor values themselves.",
-        "The camera cuts between several viewpoints, and each cut changes how much blue is on screen. Some of the changes you hear are the camera, not the weather.",
-        "This is the longest item, at nearly five minutes."
-      ]
+      "timeRange": "January 2017 to July 2023",
+      "group": "frames"
     }
   ],
   "userTemplate": {
@@ -792,6 +926,7 @@
     "limitations": [
       "This sound is derived from image features. Color on screen is a picture of the data, not the measurement itself.",
       "Check the reuse terms of the original visualization and credit its source."
-    ]
+    ],
+    "group": "frames"
   }
 }

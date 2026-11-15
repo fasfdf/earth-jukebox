@@ -39,16 +39,17 @@ node tests/math.test.mjs
 
 | Item | Sound derived from | Source |
 |---|---|---|
-| Global temperature, 1880–2025 | **Scientific data**: GISTEMP v4 annual global mean anomaly | NASA GISS, <https://data.giss.nasa.gov/gistemp/> |
+| Global temperature, 1880–2025 (NASA map animation plays in step) | **Scientific data**: GISTEMP v4 annual global mean anomaly | NASA GISS, <https://data.giss.nasa.gov/gistemp/> |
+| Arctic temperature, 1880–2025 | **Scientific data**: GISTEMP v4 zonal annual means, 64°N–90°N | NASA GISS, <https://data.giss.nasa.gov/gistemp/> |
+| Carbon dioxide in the air, 1959–2025 | **Scientific data**: Mauna Loa annual mean | NOAA Global Monitoring Laboratory, <https://gml.noaa.gov/ccgg/trends/> |
+| Arctic sea ice in September, 1979–2026 | **Scientific data**: Sea Ice Index monthly extent | NSIDC, <https://nsidc.org/data/g02135> |
 | Global temperature map animation | **Image features** of each video frame | NASA SVS visualization 5603, <https://svs.gsfc.nasa.gov/5603/> |
 | Spread of the Dixie Fire, 2021 | **Image features** of each video frame | NASA SVS visualization 4993, <https://svs.gsfc.nasa.gov/4993/> |
-| Global carbon dioxide, Jan–Mar 2020 | **Image features** of each video frame | NASA SVS visualization 5196, <https://svs.gsfc.nasa.gov/5196/> |
 | Ocean surface currents and temperature, 2007–2008 | **Image features** | NASA SVS visualization 3912, <https://svs.gsfc.nasa.gov/3912/> |
 | Lightning seen from the Space Station, 2017–2023 | **Image features** | NASA SVS visualization 5011, <https://svs.gsfc.nasa.gov/5011/> |
-| An atmospheric river in 3D | **Image features** | NASA SVS visualization 4960, <https://svs.gsfc.nasa.gov/4960/> |
 | Your own video or frames | **Image features** | Whatever you load. Credit its source. |
 
-Every item states which of the two it is. Color on screen is a picture of the data, not the measurement, so where NASA publishes the numbers behind a visualization we use the numbers.
+The measurement-driven items are the main list: every note is a real value, which is what makes the science audible to someone who cannot see the picture. This direction came from a blind member of the team after testing the first version. The video-color items are kept as a second group for exploring a visualization by ear. Every item states which of the two it is. Color on screen is a picture of the data, not the measurement, so where NASA publishes the numbers behind a visualization we use the numbers.
 
 ## Project structure
 
@@ -65,10 +66,12 @@ earth-jukebox/
 │   └── visualizer.js     Displays the data, the frames and the audio waveform
 ├── data/
 │   ├── catalog.json      One entry per visualization: source, description, timing, mapping
-│   └── gistemp_annual.json
+│   ├── gistemp_annual.json and three more measurement files
+│   └── raw/              Source files exactly as downloaded
 ├── tools/
 │   ├── fetch_assets.sh   Downloads the NASA video into assets/images/
-│   └── update_data.py    Refreshes the temperature data directly from NASA GISS
+│   ├── update_data.py    Refreshes the global temperature data directly from NASA GISS
+│   └── fetch_data.sh     Downloads the raw Arctic temperature, carbon dioxide and sea ice files
 ├── tests/math.test.mjs   Checks the formulas against the worked examples below
 └── assets/
     ├── clips/            Web-sized copies of the NASA animations (committed)
@@ -171,7 +174,7 @@ Visible light (about 380–750 nm) is roughly 400–790 THz, far above hearing. 
 - "Reduce motion" (on by default if your system asks for it) shows the whole chart with only a moving marker, hides the video and turns off the oscilloscope. Sound continues.
 - Loudness is bounded and there are no sudden onsets.
 
-Not yet done: review by blind or low-vision users. That is the most valuable next step.
+Reviewed by a blind team member, whose feedback moved the project toward measurement-driven sound. Wider testing with blind and low-vision users is the most valuable next step.
 
 ## Limitations
 
@@ -203,10 +206,10 @@ Data features available: `value`, `trend`, `change`, `progress`. Frame features:
 - GISTEMP Team, 2026: GISS Surface Temperature Analysis (GISTEMP), version 4. NASA Goddard Institute for Space Studies. <https://data.giss.nasa.gov/gistemp/>
 - "Global Temperature Anomalies from 1880 to 2025", NASA's Scientific Visualization Studio, visualization 5603. <https://svs.gsfc.nasa.gov/5603/>
 - "Spread of the Dixie Fire - 2021", NASA's Scientific Visualization Studio, visualization 4993. <https://svs.gsfc.nasa.gov/4993/>
-- "DYAMOND Global Carbon Dioxide", NASA's Scientific Visualization Studio, visualization 5196. <https://svs.gsfc.nasa.gov/5196/>
 - "Global Sea Surface Currents and Temperature", NASA/Goddard Space Flight Center Scientific Visualization Studio, visualization 3912. <https://svs.gsfc.nasa.gov/3912/>
 - "Lightning Events Detected from the International Space Station (ISS) 2017-2023", NASA's Scientific Visualization Studio, visualization 5011. <https://svs.gsfc.nasa.gov/5011/>
-- "A 3D View of an Atmospheric River from an Earth System Model", NASA's Scientific Visualization Studio, visualization 4960. <https://svs.gsfc.nasa.gov/4960/>
+- NOAA Global Monitoring Laboratory, Trends in Atmospheric Carbon Dioxide, Mauna Loa Observatory. <https://gml.noaa.gov/ccgg/trends/>
+- National Snow and Ice Data Center, Sea Ice Index (G02135). <https://nsidc.org/data/g02135>
 - NASA Earth Information Center gallery. <https://svs.gsfc.nasa.gov/gallery/earth-information-center/>
 - NASA, "Electromagnetic Math". <https://science.nasa.gov/wp-content/uploads/2023/09/Electromagnetic_Math.pdf>
 - NASA data sonifications. <https://www.nasa.gov/data-sonifications>

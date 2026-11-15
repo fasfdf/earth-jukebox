@@ -97,7 +97,10 @@ input[type="range"] { width: 100%; min-height: 30px; accent-color: var(--accent)
 .stage canvas, .stage video { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .stage video { object-fit: contain; background: #04070f; }
 .stage [hidden] { display: none; }
+.stage.split video { height: 64%; }
+.stage.split canvas { top: 64%; height: 36%; }
 .stage.reduced video { visibility: hidden; }
+.stage.split.reduced canvas { top: 0; height: 100%; }
 .stage-note {
   position: absolute; inset: auto 12px 12px 12px; margin: 0; padding: 12px 14px;
   background: rgba(7, 11, 24, 0.92); border: 1px solid var(--accent); border-radius: 10px;

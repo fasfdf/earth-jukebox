@@ -29,7 +29,7 @@ function divergingColor(value, maxAbs) {
 
 export function formatValue(value, item) {
   const sign = item.data.signed && value > 0 ? "+" : "";
-  return `${sign}${value.toFixed(2)} ${item.data.unit}`;
+  return `${sign}${value.toFixed(item.data.decimals ?? 2)} ${item.data.unit}`;
 }
 
 // Draws a data track: one colored stripe per step, the values as a line, and a playhead.
@@ -40,14 +40,18 @@ export function drawDataStage(canvas, track, item, position, { reducedMotion = f
   const n = track.length;
   const index = clamp(Math.floor(position), 0, n - 1);
   const shown = reducedMotion ? n - 1 : index;
-  const maxAbs = Math.max(Math.abs(track.min), Math.abs(track.max)) || 1;
+  // Stripe colors show distance from a centre value: zero for anomalies, or the
+  // midpoint of the record. `invertColors` makes low values red (e.g. less sea ice).
+  const centre = item.visual.center === "mid" ? (track.min + track.max) / 2 : item.visual.center ?? 0;
+  const flip = item.visual.invertColors ? -1 : 1;
+  const maxAbs = Math.max(Math.abs(track.min - centre), Math.abs(track.max - centre)) || 1;
   const stripeW = w / n;
 
   ctx.fillStyle = "#070b18";
   ctx.fillRect(0, 0, w, h);
 
   for (let i = 0; i <= shown; i++) {
-    ctx.fillStyle = divergingColor(track.values[i], maxAbs);
+    ctx.fillStyle = divergingColor((track.values[i] - centre) * flip, maxAbs);
     ctx.fillRect(Math.floor(i * stripeW), 0, Math.ceil(stripeW) + 1, h);
   }
 
@@ -61,8 +65,8 @@ export function drawDataStage(canvas, track, item, position, { reducedMotion = f
   ctx.strokeStyle = "rgba(0,0,0,0.55)";
   ctx.setLineDash([6 * ratio, 6 * ratio]);
   ctx.beginPath();
-  ctx.moveTo(0, y(0));
-  ctx.lineTo(w, y(0));
+  ctx.moveTo(0, y(centre));
+  ctx.lineTo(w, y(centre));
   ctx.stroke();
   ctx.setLineDash([]);
 

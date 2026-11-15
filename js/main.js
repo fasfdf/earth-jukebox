@@ -88,6 +88,26 @@ function framesPerSecond() {
   return state.item.timing.framesPerSecond || 4;
 }
 
+// A data item can show a NASA animation of the same data alongside its chart.
+// The measurements drive the sound; the video only follows the data clock.
+function companion() {
+  return state.item?.kind === "data" && state.hasCompanion ? state.item.visual.companion : null;
+}
+
+function companionTime() {
+  const c = companion();
+  const t = (state.pos / stepSeconds()) * c.secondsPerStep;
+  return clamp(t, 0, Math.max(0, (el.video.duration || 0) - 0.05));
+}
+
+function syncCompanion(force = false) {
+  const c = companion();
+  if (!c || el.video.readyState < 1) return;
+  const target = companionTime();
+  if (force || Math.abs(el.video.currentTime - target) > 0.35) el.video.currentTime = target;
+  el.video.playbackRate = clamp((c.secondsPerStep / stepSeconds()) * speed(), 0.25, 4);
+}
+
 // ---------- Transport ----------
 
 async function play() {
@@ -106,13 +126,17 @@ async function play() {
       return;
     }
   }
+  if (companion()) {
+    syncCompanion(true);
+    el.video.play().catch(() => {});
+  }
   state.playing = true;
   el.play.textContent = "Pause";
   setStatus(state.analysable === false ? "Playing the picture only. This video cannot be analysed from here, so there is no sound." : "Playing.");
 }
 
 function pause(message = "Paused.") {
-  if (state.item?.kind === "video") el.video.pause();
+  if (state.item?.kind === "video" || companion()) el.video.pause();
   state.engine?.silence();
   if (state.playing) setStatus(message);
   state.playing = false;
@@ -122,6 +146,7 @@ function pause(message = "Paused.") {
 function seek(seconds) {
   state.pos = clamp(seconds, 0, state.duration);
   if (state.item?.kind === "video" && Number.isFinite(state.pos)) el.video.currentTime = state.pos;
+  if (companion()) syncCompanion(true);
   if (state.ctx) state.lastNow = state.ctx.currentTime;
   state.lastIdx = -1;
   state.prevLum = null;
@@ -145,6 +170,8 @@ async function selectItem(item) {
   state.params = null;
   state.smoothers = {};
   state.analysable = true;
+  state.hasCompanion = false;
+  el.stage.classList.remove("split");
   el.note.hidden = true;
   el.momentNow.hidden = true;
   el.readout.textContent = "Press Play to start.";
@@ -163,6 +190,14 @@ async function selectItem(item) {
     if (item.kind === "data") {
       state.track = await loadDataTrack(item);
       state.duration = state.track.length * stepSeconds();
+      if (item.visual.companion) {
+        const source = await resolveVideoSource({ visual: { local: item.visual.companion.local } });
+        if (source && (await loadVideoUrl(source.url, false))) {
+          state.hasCompanion = true;
+          el.video.hidden = false;
+          el.stage.classList.add("split");
+        }
+      }
     } else if (item.kind === "frames") {
       state.duration = item.frames.length / framesPerSecond();
     } else {
@@ -267,7 +302,7 @@ function renderInfo(item) {
   el.summary.textContent = item.summary;
   el.canvas.setAttribute("aria-label", `${item.title}. ${item.summary}`);
   el.caption.textContent = item.kind === "data"
-    ? "One stripe per year: blue is cooler than the 1951–1980 average, red is warmer. The line and the label show the same values, so nothing depends on color alone."
+    ? `${state.hasCompanion ? `Top: ${item.visual.companion.label}, following the data. Bottom: ` : ""}${item.visual.caption || "One colored stripe per step, with a line and a label showing the same values, so nothing depends on color alone."}`
     : "The video's own audio is muted so only the sonification is heard.";
 
   el.mapping.replaceChildren();
@@ -335,7 +370,7 @@ function onDataStep(index) {
 function advanceClock() {
   const item = state.item;
   if (item.kind === "video") {
-    if (!state.scrubbing && el.video.readyState > 0) state.pos = el.video.currentTime;
+    if (!state.scrubbing && !el.video.seeking && el.video.readyState > 0) state.pos = el.video.currentTime;
     if (state.playing && el.video.ended) pause("Finished. Press Play to listen again.");
     return;
   }
@@ -347,6 +382,7 @@ function advanceClock() {
     state.pos = state.duration;
     pause("Finished. Press Play to listen again.");
   }
+  syncCompanion();
 }
 
 function tickData() {
@@ -545,11 +581,24 @@ function updateLight() {
 
 // ---------- Wiring ----------
 
+const GROUP_LABELS = {
+  measurements: "From NASA measurements",
+  frames: "From video colors",
+};
+
 function addOption(item) {
+  const key = item.group || "frames";
+  let group = el.select.querySelector(`optgroup[data-group="${key}"]`);
+  if (!group) {
+    group = document.createElement("optgroup");
+    group.label = GROUP_LABELS[key] || key;
+    group.dataset.group = key;
+    el.select.appendChild(group);
+  }
   const option = document.createElement("option");
   option.value = item.id;
   option.textContent = item.title;
-  el.select.appendChild(option);
+  group.appendChild(option);
 }
 
 async function init() {
@@ -583,7 +632,7 @@ async function init() {
       const mapping = state.catalog.items.find((i) => i.id === template.mappingFrom).mapping;
       const item = await itemFromFiles(el.file.files, { ...template, mapping });
       state.catalog.items = state.catalog.items.filter((i) => !i.id.startsWith("user-"));
-      [...el.select.options].filter((o) => o.value.startsWith("user-")).forEach((o) => o.remove());
+      [...el.select.querySelectorAll("option")].filter((o) => o.value.startsWith("user-")).forEach((o) => o.remove());
       state.catalog.items.push(item);
       addOption(item);
       el.select.value = item.id;
@@ -611,7 +660,10 @@ async function init() {
     state.engine?.setVolume(currentVolume());
     setStatus(state.muted ? "Sound muted." : "Sound on.");
   });
-  el.speed.addEventListener("change", () => { el.video.playbackRate = speed(); });
+  el.speed.addEventListener("change", () => {
+    if (companion()) syncCompanion();
+    else el.video.playbackRate = speed();
+  });
   el.curve.addEventListener("change", () => { state.dirty = true; });
   el.color.addEventListener("change", () => { state.prevLum = null; state.dirty = true; });
   el.reduced.addEventListener("change", applyReducedMotion);
