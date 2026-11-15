@@ -12,7 +12,7 @@ import { drawDataStage, drawFrameStage, drawScope, formatValue } from "./visuali
 
 const $ = (id) => document.getElementById(id);
 const el = {
-  select: $("itemSelect"), file: $("fileInput"), stage: $("stage"), canvas: $("stageCanvas"),
+  select: $("itemSelect"), tracks: $("trackList"), file: $("fileInput"), stage: $("stage"), canvas: $("stageCanvas"),
   video: $("stageVideo"), note: $("stageNote"), caption: $("stageCaption"), scope: $("scope"),
   play: $("playBtn"), restart: $("restartBtn"), prev: $("prevBtn"), next: $("nextBtn"),
   legend: $("legendBtn"), guided: $("guided"), speak: $("speak"), decades: $("decades"), decadesLabel: $("decadesLabel"), about: $("aboutBlock"), timeline: $("timeline"), time: $("timeReadout"),
@@ -197,6 +197,7 @@ function seek(seconds) {
 
 async function selectItem(item) {
   cancelGuide();
+  markCurrentTrack(item.id);
   pause("");
   state.loading = true;
   state.item = item;
@@ -343,10 +344,10 @@ function addText(parent, tag, text) {
 function renderInfo(item) {
   el.title.textContent = item.title;
   const fromData = item.derivedFrom === "scientific-data";
-  el.badge.textContent = fromData ? "Sound derived from scientific data" : "Sound derived from image features";
+  el.badge.textContent = fromData ? "Sound from measured data" : "Sound from video colors";
   el.badge.classList.toggle("image", !fromData);
   el.timeRange.hidden = !item.timeRange;
-  el.timeRange.textContent = item.timeRange ? `Time range: ${item.timeRange}` : "";
+  el.timeRange.textContent = item.timeRange ? `${item.timeRange[0].toUpperCase()}${item.timeRange.slice(1)}.` : "";
   el.description.textContent = item.description;
   el.summary.textContent = item.summary;
   el.canvas.setAttribute("aria-label", `${item.title}. ${item.summary}`);
@@ -748,6 +749,43 @@ function addOption(item) {
   option.value = item.id;
   option.textContent = item.title;
   group.appendChild(option);
+
+  // The same record in the visible list (wide screens show the list, narrow ones the menu).
+  let list = el.tracks.querySelector(`ol[data-group="${key}"]`);
+  if (!list) {
+    const heading = document.createElement("h2");
+    heading.className = "track-group";
+    heading.textContent = GROUP_LABELS[key] || key;
+    list = document.createElement("ol");
+    list.dataset.group = key;
+    el.tracks.append(heading, list);
+  }
+  const li = document.createElement("li");
+  li.dataset.id = item.id;
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "track";
+  const n = document.createElement("span");
+  n.className = "n";
+  n.textContent = String(el.tracks.querySelectorAll("li").length + 1);
+  n.setAttribute("aria-hidden", "true");
+  const name = document.createElement("span");
+  name.textContent = item.title.replace(/\s*\(from [^)]*\)$/, "");
+  button.append(n, name);
+  button.addEventListener("click", () => {
+    el.select.value = item.id;
+    selectItem(item);
+  });
+  li.appendChild(button);
+  list.appendChild(li);
+}
+
+function markCurrentTrack(id) {
+  for (const li of el.tracks.querySelectorAll("li")) {
+    const button = li.querySelector("button");
+    if (li.dataset.id === id) button.setAttribute("aria-current", "true");
+    else button.removeAttribute("aria-current");
+  }
 }
 
 async function init() {
@@ -782,6 +820,7 @@ async function init() {
       const item = await itemFromFiles(el.file.files, { ...template, mapping });
       state.catalog.items = state.catalog.items.filter((i) => !i.id.startsWith("user-"));
       [...el.select.querySelectorAll("option")].filter((o) => o.value.startsWith("user-")).forEach((o) => o.remove());
+      [...el.tracks.querySelectorAll("li")].filter((li) => li.dataset.id.startsWith("user-")).forEach((li) => li.remove());
       state.catalog.items.push(item);
       addOption(item);
       el.select.value = item.id;

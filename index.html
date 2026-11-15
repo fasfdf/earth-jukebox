@@ -3,9 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Earth Jukebox — hear NASA's view of a changing planet</title>
-  <meta name="description" content="Earth Jukebox pairs NASA Earth Information Center visualizations with sound generated in real time, so Earth science can be heard as well as seen.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2714%27 fill=%27%23ffb454%27/%3E%3Cpath d=%27M6 16q5-9 10 0t10 0%27 fill=%27none%27 stroke=%27%23070b18%27 stroke-width=%273%27/%3E%3C/svg%3E">
+  <title>Earth Jukebox: hear NASA's records of a changing planet</title>
+  <meta name="description" content="Earth Jukebox turns NASA's measurements of our planet into sound, generated live in step with the picture, so Earth science can be heard as well as seen.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 fill=%27%230e1b2e%27/%3E%3Crect x=%274%27 width=%276%27 height=%2732%27 fill=%27%231f5fa8%27/%3E%3Crect x=%2713%27 width=%276%27 height=%2732%27 fill=%27%23f0f0f0%27/%3E%3Crect x=%2722%27 width=%276%27 height=%2732%27 fill=%27%23b5202e%27/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -21,151 +24,166 @@
     if (location.protocol === "file:") document.getElementById("fileWarning").hidden = false;
   </script>
 
-  <header class="site-header">
-    <p class="eyebrow">NASA Space Apps Challenge 2026 · Earth Information Jukebox</p>
-    <h1>Earth Jukebox</h1>
-    <p class="lede">Pick a NASA view of our changing planet and listen to it. Sound is generated live, in step with the picture, so the science can be heard as well as seen.</p>
+  <header class="masthead">
+    <div class="masthead-text">
+      <h1>Earth Jukebox</h1>
+      <p class="lede">Pick a record of our changing planet and listen to it. In the main list, every note is a real measurement.</p>
+    </div>
+    <div class="stripes" aria-hidden="true"></div>
+    <p class="stripes-caption">Each stripe is one year of global temperature, 1880 to 2025, from NASA's record. Blue is cooler than average, red is warmer.</p>
   </header>
 
   <main>
-    <section class="card intro" aria-labelledby="howHeading">
-      <h2 id="howHeading">How to listen</h2>
+    <details class="howto">
+      <summary>How to listen</summary>
       <ol>
-        <li>Choose a visualization, then press <strong>Play</strong>. Nothing plays until you do.</li>
-        <li>Listen for pitch first: a higher note means a higher value. The table called “What you are hearing” lists everything else.</li>
-        <li>Items under <strong>From NASA measurements</strong> turn the measured numbers into sound: every note is a real value. Start with these.</li>
-        <li>Items under <strong>From video colors</strong> turn the colors of a NASA animation into sound. They let you explore a visualization by ear, but color is only a picture of the data, not the measurement.</li>
+        <li>Choose a record, then press <strong>Play</strong>. Nothing plays until you do.</li>
+        <li>Listen for pitch first: a higher note means a higher value. “Hear the reference notes” plays the lowest and highest notes, so you know the range before you start.</li>
+        <li>Records under <strong>From NASA measurements</strong> turn the measured numbers into sound. Start with these.</li>
+        <li>Records under <strong>From video colors</strong> turn the colors of a NASA animation into sound. They let you explore a visualization by ear, but color is only a picture of the data, not the measurement.</li>
       </ol>
-      <p class="hint">Keyboard: Tab moves between controls, Space plays or pauses, and the arrow keys move the timeline one step at a time when it has focus. On the measurement items, “Previous year” and “Next year” let you explore at your own pace: each press plays that year's note and reads out its value. “Hear the reference notes” plays the lowest and highest notes first, so you know the range before you listen. “Guided tour” stops the sound at each key moment so its description can be read or spoken without talking over the notes, then carries on. If you use a screen reader, leave “Read the tour aloud” off: your screen reader will read each description.</p>
-    </section>
+      <p>Keyboard: Tab moves between controls, Space plays or pauses, and the arrow keys move the timeline one step at a time when it has focus. On the measurement records, the step buttons let you explore at your own pace: each press plays one note and reads out its value. “Guided tour” stops the sound at each key moment so its description can be read or spoken without talking over the notes, then carries on. If you use a screen reader, leave “Read the tour aloud” off: your screen reader will read each description.</p>
+    </details>
 
-    <section id="player" class="card player" aria-labelledby="playerHeading">
-      <h2 id="playerHeading" class="visually-hidden">Player</h2>
-
-      <div class="chooser">
-        <div class="field grow">
-          <label for="itemSelect">Visualization</label>
+    <div class="layout">
+      <nav class="tracks" aria-label="Records">
+        <div id="trackList" class="track-list"></div>
+        <div class="field track-select">
+          <label for="itemSelect">Record</label>
           <select id="itemSelect"></select>
         </div>
-        <div class="field">
+        <div class="field own-file">
           <label for="fileInput">Or load your own video or image frames</label>
           <input id="fileInput" type="file" accept="video/*,image/*" multiple>
         </div>
+      </nav>
+
+      <div class="now">
+        <section id="player" class="player" aria-labelledby="itemTitle">
+          <h2 id="itemTitle">Loading…</h2>
+          <p class="meta"><span id="derivedBadge" class="badge"></span> <span id="itemTimeRange" hidden></span></p>
+
+          <div id="stage" class="stage">
+            <canvas id="stageCanvas" role="img" aria-label="Visualization"></canvas>
+            <video id="stageVideo" muted playsinline preload="auto" hidden aria-label="NASA visualization video. Its own audio is muted."></video>
+            <p id="stageNote" class="stage-note" hidden></p>
+          </div>
+          <p id="stageCaption" class="caption"></p>
+
+          <div class="transport" role="group" aria-label="Playback controls">
+            <button id="playBtn" type="button" class="primary">Play</button>
+            <button id="restartBtn" type="button">Restart</button>
+            <button id="prevBtn" type="button" hidden>Previous year</button>
+            <button id="nextBtn" type="button" hidden>Next year</button>
+            <button id="legendBtn" type="button">Hear the reference notes</button>
+          </div>
+          <div class="timeline-row">
+            <div class="field grow">
+              <label for="timeline">Timeline</label>
+              <input id="timeline" type="range" min="0" max="1" step="0.01" value="0">
+            </div>
+            <output id="timeReadout" for="timeline" class="readout"></output>
+          </div>
+          <div class="volume-row">
+            <div class="field">
+              <label for="volume">Volume</label>
+              <input id="volume" type="range" min="0" max="100" step="1" value="70">
+            </div>
+            <button id="muteBtn" type="button" aria-pressed="false">Mute</button>
+          </div>
+
+          <p id="status" class="status" role="status" aria-live="polite"></p>
+          <p id="liveRegion" class="visually-hidden" aria-live="polite"></p>
+          <canvas id="scope" class="scope" aria-hidden="true"></canvas>
+
+          <details class="more">
+            <summary>More controls</summary>
+            <div class="settings" role="group" aria-label="Sound and display settings">
+              <div class="field">
+                <label for="speed">Speed</label>
+                <select id="speed">
+                  <option value="0.5">Half speed</option>
+                  <option value="1" selected>Normal</option>
+                  <option value="2">Double speed</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="curve">Pitch curve</label>
+                <select id="curve">
+                  <option value="quantized" selected>Musical scale</option>
+                  <option value="log">Logarithmic</option>
+                  <option value="linear">Linear</option>
+                </select>
+              </div>
+              <div class="field" id="colorTargetField" hidden>
+                <label for="colorTarget">Color to follow</label>
+                <select id="colorTarget"></select>
+              </div>
+              <label class="check" id="decadesLabel" hidden><input id="decades" type="checkbox" checked> Tick at each decade</label>
+              <label class="check"><input id="guided" type="checkbox"> Guided tour: pause at key moments</label>
+              <label class="check"><input id="speak" type="checkbox"> Read the tour aloud</label>
+              <label class="check"><input id="announce" type="checkbox"> Announce key moments while playing</label>
+              <label class="check"><input id="reducedMotion" type="checkbox"> Reduce motion</label>
+              <button id="exportBtn" type="button">Download audio (WAV)</button>
+            </div>
+          </details>
+        </section>
+
+        <section class="story" aria-labelledby="storyHeading">
+          <h2 id="storyHeading">What happens, in words</h2>
+          <p id="itemDescription"></p>
+          <p id="itemSummary" class="summary"></p>
+          <p id="momentNow" class="moment-now" hidden></p>
+          <div id="momentsBlock" hidden>
+            <h3>Key moments</h3>
+            <p class="hint">Choose a moment to jump there.</p>
+            <ul id="moments" class="moments"></ul>
+          </div>
+        </section>
+
+        <details class="panel" open>
+          <summary>What you are hearing</summary>
+          <div class="table-wrap">
+            <table id="mappingTable">
+              <thead>
+                <tr><th scope="col">Sound</th><th scope="col">Driven by</th><th scope="col">In plain words</th><th scope="col">Limits</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <h3>Right now</h3>
+          <p id="liveReadout" class="live-readout">Press Play to start.</p>
+        </details>
+
+        <details class="panel">
+          <summary>About this record</summary>
+          <div id="aboutBlock"></div>
+          <h3>What the sound cannot tell you</h3>
+          <ul id="limitations"></ul>
+          <h3>Source and credit</h3>
+          <div id="sourceBlock"></div>
+        </details>
+
+        <details class="panel lab">
+          <summary>Light to sound: try the math</summary>
+          <p>Light and sound are both waves, but visible light vibrates about a trillion times faster than anything we can hear. Halve a light frequency 40 times (drop it 40 octaves) and it lands in the range of a piano, with the spacing between colors kept intact.</p>
+          <div class="lab-row">
+            <div class="field grow">
+              <label for="wavelength">Wavelength of light, in nanometres</label>
+              <input id="wavelength" type="range" min="380" max="750" step="1" value="550">
+            </div>
+            <span id="swatch" class="swatch" aria-hidden="true"></span>
+            <button id="lightPlay" type="button">Play this color</button>
+          </div>
+          <p id="lightReadout" class="live-readout"></p>
+          <p class="hint">This is a way to explore the math, not a measurement. The swatch color is approximate.</p>
+        </details>
       </div>
-
-      <div id="stage" class="stage">
-        <canvas id="stageCanvas" role="img" aria-label="Visualization"></canvas>
-        <video id="stageVideo" muted playsinline preload="auto" hidden aria-label="NASA visualization video. Its own audio is muted."></video>
-        <p id="stageNote" class="stage-note" hidden></p>
-      </div>
-      <p id="stageCaption" class="caption"></p>
-      <canvas id="scope" class="scope" aria-hidden="true"></canvas>
-
-      <div class="transport" role="group" aria-label="Playback controls">
-        <button id="playBtn" type="button" class="primary">Play</button>
-        <button id="restartBtn" type="button">Restart</button>
-        <button id="prevBtn" type="button" hidden>Previous year</button>
-        <button id="nextBtn" type="button" hidden>Next year</button>
-        <div class="field grow">
-          <label for="timeline">Timeline</label>
-          <input id="timeline" type="range" min="0" max="1" step="0.01" value="0">
-        </div>
-        <output id="timeReadout" for="timeline" class="readout"></output>
-      </div>
-
-      <div class="settings" role="group" aria-label="Sound and display settings">
-        <div class="field">
-          <label for="volume">Volume</label>
-          <input id="volume" type="range" min="0" max="100" step="1" value="70">
-        </div>
-        <button id="muteBtn" type="button" aria-pressed="false">Mute</button>
-        <div class="field">
-          <label for="speed">Speed</label>
-          <select id="speed">
-            <option value="0.5">Half speed</option>
-            <option value="1" selected>Normal</option>
-            <option value="2">Double speed</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="curve">Pitch curve</label>
-          <select id="curve">
-            <option value="quantized" selected>Musical scale</option>
-            <option value="log">Logarithmic</option>
-            <option value="linear">Linear</option>
-          </select>
-        </div>
-        <div class="field" id="colorTargetField" hidden>
-          <label for="colorTarget">Color to follow</label>
-          <select id="colorTarget"></select>
-        </div>
-        <button id="legendBtn" type="button">Hear the reference notes</button>
-        <label class="check" id="decadesLabel" hidden><input id="decades" type="checkbox" checked> Tick at each decade</label>
-        <label class="check"><input id="reducedMotion" type="checkbox"> Reduce motion</label>
-        <label class="check"><input id="announce" type="checkbox"> Announce key moments</label>
-        <label class="check"><input id="guided" type="checkbox"> Guided tour: pause at key moments</label>
-        <label class="check"><input id="speak" type="checkbox"> Read the tour aloud</label>
-        <button id="exportBtn" type="button">Download audio (WAV)</button>
-      </div>
-
-      <p id="status" class="status" role="status" aria-live="polite"></p>
-      <p id="liveRegion" class="visually-hidden" aria-live="polite"></p>
-    </section>
-
-    <div class="columns">
-      <section class="card" aria-labelledby="itemTitle">
-        <h2 id="itemTitle">Loading…</h2>
-        <p id="derivedBadge" class="badge"></p>
-        <p id="itemTimeRange" class="hint" hidden></p>
-        <p id="itemDescription"></p>
-        <h3>What happens, in words</h3>
-        <p id="itemSummary"></p>
-        <div id="aboutBlock"></div>
-        <p id="momentNow" class="moment-now" hidden></p>
-        <div id="momentsBlock" hidden>
-          <h3>Key moments</h3>
-          <p class="hint">Choose a moment to jump there.</p>
-          <ul id="moments" class="moments"></ul>
-        </div>
-      </section>
-
-      <section class="card" aria-labelledby="mappingHeading">
-        <h2 id="mappingHeading">What you are hearing</h2>
-        <div class="table-wrap">
-          <table id="mappingTable">
-            <thead>
-              <tr><th scope="col">Sound</th><th scope="col">Driven by</th><th scope="col">In plain words</th><th scope="col">Limits</th></tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <h3>Right now</h3>
-        <p id="liveReadout" class="live-readout">Press Play to start.</p>
-        <h3>What the sound cannot tell you</h3>
-        <ul id="limitations"></ul>
-        <h3>Source and credit</h3>
-        <div id="sourceBlock"></div>
-      </section>
     </div>
-
-    <section class="card lab" aria-labelledby="labHeading">
-      <h2 id="labHeading">Light to sound</h2>
-      <p>Light and sound are both waves, but visible light vibrates about a trillion times faster than anything we can hear. Halve a light frequency 40 times (drop it 40 octaves) and it lands in the range of a piano, with the spacing between colors kept intact.</p>
-      <div class="lab-row">
-        <div class="field grow">
-          <label for="wavelength">Wavelength of light, in nanometres</label>
-          <input id="wavelength" type="range" min="380" max="750" step="1" value="550">
-        </div>
-        <span id="swatch" class="swatch" aria-hidden="true"></span>
-        <button id="lightPlay" type="button">Play this color</button>
-      </div>
-      <p id="lightReadout" class="live-readout"></p>
-      <p class="hint">This is a way to explore the math, not a measurement. The swatch color is approximate.</p>
-    </section>
   </main>
 
   <footer class="site-footer">
-    <p>Data and visualizations courtesy of NASA: GISTEMP v4 (NASA Goddard Institute for Space Studies) and NASA's Scientific Visualization Studio. Sound is synthesized in your browser with the Web Audio API. Built for the NASA Space Apps Challenge 2026. This project is not endorsed by NASA.</p>
+    <p>Data and visualizations courtesy of NASA (GISTEMP, Ozone Watch, Scientific Visualization Studio), NOAA and the National Snow and Ice Data Center. Each record lists its own source. Sound is made in your browser with the Web Audio API. Built for the NASA Space Apps Challenge 2026; not endorsed by NASA.</p>
   </footer>
 
   <script type="module" src="js/main.js"></script>
