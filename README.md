@@ -4,18 +4,22 @@ NASA Space Apps Challenge 2026 — **Earth Information Jukebox**
 
 Earth Jukebox pairs NASA Earth Information Center (EIC) visualizations with sound generated in real time in the browser, so a changing planet can be heard as well as seen. It is a static site: HTML, CSS and JavaScript with the Web Audio API. There is no backend and nothing to install.
 
-## Run it
+## Try it
 
-The page loads JavaScript modules and JSON, which browsers block when a file is opened directly. Use a local web server:
+**Live site: <https://fasfdf.github.io/earth-jukebox/>**
+
+Open the link, choose a visualization and press Play. Nothing plays until you do, and there is nothing to install. It has been tested in Chrome; other current browsers should work but have not been checked.
+
+## Run it locally (for development)
+
+The page loads JavaScript modules and JSON, which browsers block when a file is opened directly, so use a local web server:
 
 - **VS Code:** install the "Live Server" extension, right-click `index.html`, choose "Open with Live Server".
 - **Terminal:** `python3 -m http.server 8000` in this folder, then open <http://localhost:8000>.
 
-Then choose a visualization and press Play. Nothing plays until you do.
-
 ### NASA videos
 
-Small web-sized copies (640 pixels wide, about 20 MB in total) of the NASA animations are included in `assets/clips/`, so every item works straight after cloning. The app analyses frames at 128 × 72 pixels, so these copies produce the same sound as the originals.
+Small web-sized copies (640 pixels wide, about 20 MB in total) of the NASA animations are included in `assets/clips/`, so every item works on the live site and straight after cloning. The app analyses frames at 128 × 72 pixels, so these copies produce the same sound as the originals.
 
 To fetch the full-quality originals from NASA (about 430 MB, saved to `assets/images/` and not committed to git):
 
